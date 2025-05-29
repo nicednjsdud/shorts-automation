@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>유튜브 쇼츠 자동 생성기</title>
+</head>
+<body>
+    <h1>🎬 쇼츠 생성기</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        {% if background_suggestions %}
+            <h3>🎞️ 추천 배경 선택</h3>
+            <div style="display: flex; gap: 10px;">
+                {% for bg in background_suggestions %}
+                    <label>
+                        <input type="radio" name="selected_background" value="{{ bg }}">
+                        <img src="/static/backgrounds/{{ bg }}" width="200">
+                    </label>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <br>
+        <button type="submit">📽️ 영상 만들기</button>
+    </form>
+
+    {% if video_path %}
+        <hr>
+        <h2>✅ 영상이 완성되었습니다!</h2>
+        <video src="{{ video_path }}" controls width="360"></video>
+    {% endif %}
+</body>
+</html>
