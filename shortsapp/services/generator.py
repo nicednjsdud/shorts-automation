@@ -67,7 +67,7 @@ def create_subclip(text, audio_path):
 # - 줄마다 TTS 생성
 # - 줄마다 영상 클립 생성
 # - 모든 클립 이어붙여 최종 영상 저장
-def process_scirpt(script_text):
+def process_script(script_text):
     parsed_lines  = parse_script(script_text)
 
     # UUID로 고유한 파일명 생성

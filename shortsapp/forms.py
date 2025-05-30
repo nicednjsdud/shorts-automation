@@ -14,5 +14,30 @@ class TextInputForm(forms.Form):
         label='원하는 영상 스타일 (설명)',
         required=False
     )
+    ai_background = forms.BooleanField(
+        required=False,
+        label='AI 추천 배경 사용',
+        help_text='선택 시 AI가 추천하는 배경을 사용합니다.'
+    )
+    font_color = forms.ChoiceField(
+        choices=[
+            ('black', '검정'),
+            ('white', '흰색'),
+            ('red', '빨강'),
+            ('blue', '파랑'),
+            ('green', '초록'),
+        ],
+        label='자막 글자 색상',
+        initial='white',
+    )
+    font_size = forms.ChoiceField(
+        choices=[
+            ('small', '작게'),
+            ('medium', '보통'),
+            ('large', '크게'),
+        ],
+        label='자막 글자 크기',
+        initial='medium',
+    )
 
     

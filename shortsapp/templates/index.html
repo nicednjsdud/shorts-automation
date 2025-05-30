@@ -32,5 +32,16 @@
         <h2>✅ 영상이 완성되었습니다!</h2>
         <video src="{{ video_path }}" controls width="360"></video>
     {% endif %}
+
+    {% for bg in background_suggestions %}
+        <label>
+            <input type="radio" name="selected_background" value="{{ bg }}">
+            {% if bg.endswith(".mp4") %}
+                <video src="/static/backgrounds/{{ bg }}" width="200" muted autoplay loop></video>
+            {% else %}
+                <img src="/static/backgrounds/{{ bg }}" width="200">
+            {% endif %}
+        </label>
+    {% endfor %}
 </body>
 </html>
