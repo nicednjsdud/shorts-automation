@@ -1,7 +1,6 @@
 import os
-import uuid
 from gtts import gTTS
-from moviepy.editor import *
+from moviepy.editor import ImageClip, AudioFileClip, TextClip, CompositeVideoClip
 from django.conf import settings
 
 # 화자별 TTS 속성 정의 (간단한 스타일 차이용, 추후 교체 가능)
@@ -67,29 +66,18 @@ def create_subclip(text, audio_path):
 # - 줄마다 TTS 생성
 # - 줄마다 영상 클립 생성
 # - 모든 클립 이어붙여 최종 영상 저장
-def process_script(script_text):
-    parsed_lines  = parse_script(script_text)
+def process_script(script, background_path):
+    # 텍스트 → 음성
+    tts = gTTS(script, lang='ko')
+    audio_path = "media/voice.mp3"
+    tts.save(audio_path)
 
-    # UUID로 고유한 파일명 생성
-    video_id = uuid.uuid4().hex
-    output_video_path = os.path.join(settings.MEDIA_ROOT, f"{video_id}.mp4")
+    # 이미지 + 음성 → 영상
+    clip = ImageClip(background_path).set_duration(5)
+    clip = clip.set_audio(AudioFileClip(audio_path))
+    clip = clip.resize(height=720)
 
-    clips = []
-    
+    output_path = "media/final_video.mp4"
+    clip.write_videofile(output_path, fps=24)
 
-    for i, (speaker, text) in enumerate(parsed_lines):
-        # 각 줄마다 mp3 생성
-        audio_path = os.path.join(settings.MEDIA_ROOT, f"{video_id}_{i}.mp3")
-        generate_tts(speaker, text, audio_path)
-
-        # 영상 클립 생성
-        clip = create_subclip(text, audio_path)
-        clips.append(clip)
-
-    # 모든 클립을 이어붙임
-    final_video = concatenate_videoclips(clips, method="compose")
-    final_video.write_videofile(output_video_path, fps=24)
-
-    # 최종 영상의 URL 경로 리턴
-    return f"/media/{video_id}.mp4"
-    
+    return output_path
