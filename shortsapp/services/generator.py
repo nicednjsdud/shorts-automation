@@ -17,7 +17,7 @@ def split_script(script, part=3):
     return ['\n'.join(lines[i:i + chunk_size]).strip() for i in range(0, len(lines), chunk_size)]
 
 # 동영상 클립을 생성합니다.
-def create_slide_clip(text, image_path, duration, font_size=50, font_color="red"):
+def create_slide_clip(text, image_path, duration, font_size=50, font_color="black"):
     # 배경 이미지 클립
     image_clip = ImageClip(image_path).set_duration(duration).resize(height=1080)
 
@@ -32,15 +32,16 @@ def create_slide_clip(text, image_path, duration, font_size=50, font_color="red"
     return CompositeVideoClip([zoom_clip, text_clip])
 
 # 텍스트 이미지를 생성합니다.
-def generate_text_image(text, width=1080, height=300, font_size=40, font_color="red"):
+def generate_text_image(text, width=1080, height=300, font_size=40, font_color="black"):
     img = Image.new("RGBA", (width, height), color=(0, 0, 0, 180))  # 반투명 배경
     draw = ImageDraw.Draw(img)
 
+    font_path = os.path.join("shortsapp", "assets", "NanumGothic.ttf")
     try:
-        font = ImageFont.truetype("arial.ttf", font_size)
-    except:
+        font = ImageFont.truetype(font_path, font_size)
+    except Exception as e:
+        print("⚠️ 폰트 로딩 실패:", e)
         font = ImageFont.load_default()
-        raise
 
     # 줄바꿈 적용
     wrapped_text = textwrap.fill(text, width=40)
