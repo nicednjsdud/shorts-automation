@@ -52,10 +52,10 @@ def generate_text_image(text, width=1080, height=300, font_size=40, font_color="
     return path
 
 # 스크립트를 처리하여 동영상을 생성합니다.
-def process_script(script, image_path):
+def process_script(script, image_paths):
     print("🔨 영상 생성 중...")
     # 1. 스크립트를 여러 부분으로 나눕니다.
-    segments = split_script(script, part= 4)
+    segments = split_script(script, part= len(image_paths))
 
     # 2. TTS 오디오 생성
     tts = gTTS(script, lang='ko')
@@ -66,17 +66,31 @@ def process_script(script, image_path):
     # 3. 구간별 영상 생성
     segment_duration = audio.duration / len(segments)
     clips = []
-    for segment in segments:
+
+    for idx, segment in enumerate(segments):
+        # 이미지 경로를 순서대로 가져옵니다.
+        img_path = image_paths[idx % len(image_paths)]
         clip = create_slide_clip(
-            segment, image_path, duration=segment_duration,
-            font_size=60, font_color='white'
+            segment, 
+            img_path, 
+            duration=segment_duration,
+            font_size=60, 
+            font_color='white'
         )
         clips.append(clip)
 
     # 4. 모든 클립을 합칩니다.
     final_video = concatenate_videoclips(clips).set_audio(audio)
     video_path = "media/final_video.mp4"
-    final_video.write_videofile(video_path, fps=24)
+    final_video.write_videofile(
+        video_path, 
+        fps=24,
+        codec="libx264", # 코덱 설정 (H.264)
+        audio_codec="aac", # 오디오 코덱 설정 (AAC)
+        bitrate="1500k", # 비트레이트 설정
+        threads=4, # 멀티스레딩 설정
+        preset="medium" # 렌더링 속도와 품질 균형 설정
+    )
 
     print("✅ 영상 생성 완료!")
 
