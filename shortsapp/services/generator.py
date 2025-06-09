@@ -11,10 +11,9 @@ from PIL import Image, ImageDraw, ImageFont
 # # ## 사용법:
 # 1. 스크립트를 입력합니다.
 # 2. 스크립트를 여러 부분으로 나눕니다.
-def split_script(script, part=3):
-    lines = script.strip().split('\n')
-    chunk_size = max(1,len(lines) // part)
-    return ['\n'.join(lines[i:i + chunk_size]).strip() for i in range(0, len(lines), chunk_size)]
+def split_script_by_lines(script):
+    return [line.strip() for line in script.strip().split('\n') if line.strip()]
+
 
 # 동영상 클립을 생성합니다.
 def create_slide_clip(text, image_path, duration, font_size=50, font_color="black"):
@@ -55,7 +54,7 @@ def generate_text_image(text, width=1080, height=300, font_size=40, font_color="
 def process_script(script, image_paths):
     print("🔨 영상 생성 중...")
     # 1. 스크립트를 여러 부분으로 나눕니다.
-    segments = split_script(script, part= len(image_paths))
+    lines = split_script_by_lines(script)
 
     # 2. TTS 오디오 생성
     tts = gTTS(script, lang='ko')
@@ -64,10 +63,10 @@ def process_script(script, image_paths):
     audio = AudioFileClip(audio_path)
 
     # 3. 구간별 영상 생성
-    segment_duration = audio.duration / len(segments)
+    segment_duration = audio.duration / len(lines)
     clips = []
 
-    for idx, segment in enumerate(segments):
+    for idx, segment in enumerate(lines):
         # 이미지 경로를 순서대로 가져옵니다.
         img_path = image_paths[idx % len(image_paths)]
         clip = create_slide_clip(

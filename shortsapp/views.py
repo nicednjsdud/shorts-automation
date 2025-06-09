@@ -24,7 +24,7 @@ def index(request):
                 style_prompt_en = translate_to_english(style_prompt)
 
                 # ✅ 번역된 영어 키워드로 이미지 자동 가져오기
-                image_paths = fetch_unsplash_images(style_prompt_en, save_dir='media', count=4)
+                image_paths = fetch_unsplash_images(style_prompt_en, save_dir='media', count=6)
             else:
                 # 🔁 기본 배경 또는 선택 배경 사용할 경우 (원한다면 수정 가능)
                 pass  # 사용자가 직접 업로드한 이미지를 처리하려면 여기에 넣기
