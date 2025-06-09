@@ -15,6 +15,8 @@ def index(request):
             script = form.cleaned_data['script']
             style_prompt = form.cleaned_data['style_prompt']
             ai_background = form.cleaned_data.get('ai_background', False)
+            font_color = form.cleaned_data['font_color']
+            font_size = form.cleaned_data['font_size']
 
             # 📸 배경 이미지 경로 지정
             image_paths = os.path.join('media', 'bg.jpg')
@@ -30,7 +32,7 @@ def index(request):
                 pass  # 사용자가 직접 업로드한 이미지를 처리하려면 여기에 넣기
 
             # 🎥 영상 생성 실행
-            video_path = process_script(script, image_paths)
+            video_path = process_script(script, image_paths, font_color, font_size)
 
     return render(request, 'index.html', {
         'form': form,

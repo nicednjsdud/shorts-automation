@@ -1,5 +1,6 @@
 import requests
 import os
+from time import sleep
 
 UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY")
 
@@ -27,6 +28,9 @@ def fetch_unsplash_images(query, save_dir='media', count=4):
         img_data = requests.get(image_url).content
         with open(image_path, 'wb') as f:
             f.write(img_data)
+        
+        print(f"✅ 이미지 저장 완료: {image_path}")
+        sleep(0.2)
 
         image_paths.append(image_path)
 

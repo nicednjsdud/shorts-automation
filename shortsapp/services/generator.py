@@ -3,6 +3,7 @@ from gtts import gTTS
 import textwrap
 import os
 from PIL import Image, ImageDraw, ImageFont
+import uuid
 
 # 이 서비스는 스크립트를 받아서 짧은 동영상을 생성합니다.
 # # 필요한 라이브러리:
@@ -18,21 +19,22 @@ def split_script_by_lines(script):
 # 동영상 클립을 생성합니다.
 def create_slide_clip(text, image_path, duration, font_size=50, font_color="black"):
     # 배경 이미지 클립
-    image_clip = ImageClip(image_path).set_duration(duration).resize(height=1080)
+    image_clip = ImageClip(image_path).set_duration(duration).resize(height=720)
+
 
     # 줌 효과 (Ken Burns 스타일)
-    zoom_clip = image_clip.resize(lambda t: 1 + 0.03 * t)
+    zoom_clip = image_clip.resize(lambda t: 1 + 0.001 * t)
 
     # 🆕 텍스트 이미지를 만들어 클립으로 전환
-    text_img_path = generate_text_image(text, width=1080, height=300, font_size=font_size, font_color=font_color)
-    text_clip = ImageClip(text_img_path).set_duration(duration)
-    text_clip = text_clip.set_position(("center", "bottom"))
+    text_img_path = generate_text_image(text, width=image_clip.w, height=200, font_size=font_size, font_color=font_color)
+    text_clip = ImageClip(text_img_path).set_duration(duration).set_position(("center", "bottom"))
 
-    return CompositeVideoClip([zoom_clip, text_clip])
+    return CompositeVideoClip([zoom_clip, text_clip], size=image_clip.size)
 
 # 텍스트 이미지를 생성합니다.
 def generate_text_image(text, width=1080, height=300, font_size=40, font_color="black"):
-    img = Image.new("RGBA", (width, height), color=(0, 0, 0, 180))  # 반투명 배경
+    os.makedirs("media/temp_text", exist_ok=True)  # 폴더 없으면 생성
+    img = Image.new("RGBA", (width, height), color=(0, 0, 0, 180))
     draw = ImageDraw.Draw(img)
 
     font_path = os.path.join("shortsapp", "assets", "NanumGothic.ttf")
@@ -42,55 +44,92 @@ def generate_text_image(text, width=1080, height=300, font_size=40, font_color="
         print("⚠️ 폰트 로딩 실패:", e)
         font = ImageFont.load_default()
 
-    # 줄바꿈 적용
     wrapped_text = textwrap.fill(text, width=40)
     draw.text((50, 50), wrapped_text, fill=font_color, font=font)
 
-    path = "temp_text.png"
-    img.save(path)
-    return path
+    # 고유 파일명
+    filename = f"media/temp_text/temp_text_{hash(text)}.png"
+    img.save(filename)
+    return filename
 
 # 스크립트를 처리하여 동영상을 생성합니다.
-def process_script(script, image_paths):
+def process_script(script, image_paths, font_color="white", font_size="medium"):
     print("🔨 영상 생성 중...")
+    for path in image_paths:
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"이미지 경로 없음: {path}")
+    
     # 1. 스크립트를 여러 부분으로 나눕니다.
     lines = split_script_by_lines(script)
-
-    # 2. TTS 오디오 생성
-    tts = gTTS(script, lang='ko')
-    audio_path = "media/audio.mp3"
+    total_lines = len(lines)
+    num_images = len(image_paths)
+    
+    # 2. TTS 전체 음성 생성
+    tts = gTTS(text=script, lang='ko')
+    audio_path = 'media/audio.mp3'
     tts.save(audio_path)
     audio = AudioFileClip(audio_path)
 
-    # 3. 구간별 영상 생성
-    segment_duration = audio.duration / len(lines)
-    clips = []
+    # 3. 자막당 시간 계산
+    segment_duration = audio.duration / total_lines if total_lines > 0 else 0
+    print(f"⏱️ 자막당 시간: {segment_duration:.2f}초")
 
-    for idx, segment in enumerate(lines):
-        # 이미지 경로를 순서대로 가져옵니다.
-        img_path = image_paths[idx % len(image_paths)]
+    # 4. 자막을 이미지에 균등 분배
+    clips = []
+    lines_per_image = max(1, total_lines // num_images)
+
+    for idx, line in enumerate(lines):
+        image_idx = min(idx // lines_per_image, num_images - 1)
+        image_path = image_paths[image_idx]
+
         clip = create_slide_clip(
-            segment, 
-            img_path, 
+            line,
+            image_path=image_path,
             duration=segment_duration,
-            font_size=60, 
-            font_color='white'
+            font_size=font_size_to_points(font_size),
+            font_color=font_color
         )
         clips.append(clip)
-
-    # 4. 모든 클립을 합칩니다.
+    
+    # 5. 모든 클립을 합칩니다.
     final_video = concatenate_videoclips(clips).set_audio(audio)
     video_path = "media/final_video.mp4"
     final_video.write_videofile(
         video_path, 
         fps=24,
-        codec="libx264", # 코덱 설정 (H.264)
-        audio_codec="aac", # 오디오 코덱 설정 (AAC)
-        bitrate="1500k", # 비트레이트 설정
-        threads=4, # 멀티스레딩 설정
-        preset="medium" # 렌더링 속도와 품질 균형 설정
+        codec="libx264",
+        audio_codec="aac",
+        bitrate="1500k",
+        threads=4,
+        preset="ultrafast",  # 더 빠르고 안정적
+        ffmpeg_params=["-pix_fmt", "yuv420p"]  # 호환성 향상
     )
 
     print("✅ 영상 생성 완료!")
 
+    # 임시 파일 삭제
+    # delete_temp_files()
+
     return video_path
+
+# 글자 크기를 포인트로 변환합니다.
+def font_size_to_points(size):
+    if size == 'small':
+        return 20
+    elif size == 'medium':
+        return 30
+    elif size == 'large':
+        return 40
+    else:
+        raise ValueError("Invalid font size")
+
+# media/temp_text 폴더 정리
+def delete_temp_files():
+   
+    temp_dir = "media/temp_text"
+    if os.path.exists(temp_dir):
+        for f in os.listdir(temp_dir):
+            try:
+                os.remove(os.path.join(temp_dir, f))
+            except Exception as e:
+                print(f"⚠️ {f} 삭제 실패: {e}")
