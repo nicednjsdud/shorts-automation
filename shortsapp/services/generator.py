@@ -12,6 +12,9 @@ import uuid
 # # ## 사용법:
 # 1. 스크립트를 입력합니다.
 # 2. 스크립트를 여러 부분으로 나눕니다.
+
+VIDEO_SIZE = (720, 1280)  # (width, height)
+
 def split_script_by_lines(script):
     return [line.strip() for line in script.strip().split('\n') if line.strip()]
 
@@ -19,20 +22,20 @@ def split_script_by_lines(script):
 # 동영상 클립을 생성합니다.
 def create_slide_clip(text, image_path, duration, font_size=50, font_color="black"):
     # 배경 이미지 클립
-    image_clip = ImageClip(image_path).set_duration(duration).resize(height=720)
+    image_clip = ImageClip(image_path).set_duration(duration).resize(VIDEO_SIZE)
 
 
     # 줌 효과 (Ken Burns 스타일)
-    zoom_clip = image_clip.resize(lambda t: 1 + 0.001 * t)
+    zoom_clip = image_clip.resize(lambda t: 1 + 0.001 * t).set_position("center")
 
     # 🆕 텍스트 이미지를 만들어 클립으로 전환
-    text_img_path = generate_text_image(text, width=image_clip.w, height=200, font_size=font_size, font_color=font_color)
+    text_img_path = generate_text_image(text, width=VIDEO_SIZE[0], height=250, font_size=font_size, font_color=font_color)
     text_clip = ImageClip(text_img_path).set_duration(duration).set_position(("center", "bottom"))
 
     return CompositeVideoClip([zoom_clip, text_clip], size=image_clip.size)
 
 # 텍스트 이미지를 생성합니다.
-def generate_text_image(text, width=1080, height=300, font_size=40, font_color="black"):
+def generate_text_image(text, width=720, height=250, font_size=40, font_color="black"):
     os.makedirs("media/temp_text", exist_ok=True)  # 폴더 없으면 생성
     img = Image.new("RGBA", (width, height), color=(0, 0, 0, 180))
     draw = ImageDraw.Draw(img)
@@ -48,7 +51,8 @@ def generate_text_image(text, width=1080, height=300, font_size=40, font_color="
     draw.text((50, 50), wrapped_text, fill=font_color, font=font)
 
     # 고유 파일명
-    filename = f"media/temp_text/temp_text_{hash(text)}.png"
+    filename = f"media/temp_text/temp_text_{uuid.uuid4().hex}.png"
+
     img.save(filename)
     return filename
 
@@ -77,7 +81,7 @@ def process_script(script, image_paths, font_color="white", font_size="medium"):
     # 4. 자막을 이미지에 균등 분배
     clips = []
     lines_per_image = max(1, total_lines // num_images)
-
+    font_pt_size = font_size_to_points(font_size)
     for idx, line in enumerate(lines):
         image_idx = min(idx // lines_per_image, num_images - 1)
         image_path = image_paths[image_idx]
@@ -86,29 +90,32 @@ def process_script(script, image_paths, font_color="white", font_size="medium"):
             line,
             image_path=image_path,
             duration=segment_duration,
-            font_size=font_size_to_points(font_size),
+            font_size=font_pt_size,
             font_color=font_color
         )
         clips.append(clip)
     
     # 5. 모든 클립을 합칩니다.
-    final_video = concatenate_videoclips(clips).set_audio(audio)
+    final_video = concatenate_videoclips(clips, method="compose")
+
+    # 🔁 영상 길이와 오디오 길이를 강제로 일치시킴
+    final_video = final_video.set_duration(audio.duration).set_audio(audio)
+
     video_path = "media/final_video.mp4"
     final_video.write_videofile(
-        video_path, 
+        video_path,
         fps=24,
         codec="libx264",
         audio_codec="aac",
         bitrate="1500k",
         threads=4,
-        preset="ultrafast",  # 더 빠르고 안정적
-        ffmpeg_params=["-pix_fmt", "yuv420p"]  # 호환성 향상
+        preset="medium"
     )
 
     print("✅ 영상 생성 완료!")
 
     # 임시 파일 삭제
-    # delete_temp_files()
+    delete_temp_files()
 
     return video_path
 
