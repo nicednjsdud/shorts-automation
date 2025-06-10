@@ -29,6 +29,8 @@ https://github.com/user-attachments/assets/215a4cda-3192-41b1-b341-8b9cf9c5c959
 
 ## 가이드 (추가예정*)
 
+![alt](/assets/images/under_construction.jpg)
+
 ## 📆 변경사항 타임라인 (체크박스)
 
 ### 📅 Week 1: 기본 기능 구성
@@ -53,8 +55,11 @@ https://github.com/user-attachments/assets/215a4cda-3192-41b1-b341-8b9cf9c5c959
 * [x] NanumGothic.ttf 폰트 적용 (한글 깨짐 해결)
 
 
-## 📝 향후 추가 예정
+## 📝 추가 예정
 * UI / UX 수정 
+* 다중 동영상 지원 (택 1 할수있도록)
+* 각 줄마다 음성 다르게 지원
+* 동영상 생성시에 시간 지연 고도화 
 * 유튜브 API 연동 → 영상 자동 업로드
 * 사용자 업로드 이미지 지원
 * 스타일 프롬프트 미리보기 기능
