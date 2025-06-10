@@ -16,11 +16,7 @@ AI 기반으로 한글 스크립트를 입력하면, 자동으로 배경 이미�
 * 🖋️ 투명 자막 이미지 + 한글 폰트(NanumGothic) 사용
 * 📱 9:16 비율 영상 출력 (쇼츠용)
 * 🗑️ 임시 자막 이미지 자동 삭제
-* 📦 압축된 비디오 렌더링 (bitrate, 코덱 설정 포함)ㄴ
-
-## 🎬 Demo Video
-
-https://github.com/user-attachments/assets/af8e9888-4366-4679-826f-ed8cf9ceaa06
+* 📦 압축된 비디오 렌더링 (bitrate, 코덱 설정 포함)
 
 ## ⚙️ 전체 프로세스
 
@@ -30,27 +26,28 @@ https://github.com/user-attachments/assets/af8e9888-4366-4679-826f-ed8cf9ceaa06
 
 ### 📅 Week 1: 기본 기능 구성
 
-* Django 프로젝트 세팅
-* 스크립트 입력 폼 작성
-* 단일 이미지 + 텍스트 기반 영상 생성
-* TTS(gTTS) 연결
+[x] Django 프로젝트 세팅
+[x] 스크립트 입력 폼 작성
+[x] 단일 이미지 + 텍스트 기반 영상 생성
+[x] TTS(gTTS) 연결
 
 ### 📅 Week 2: UI + AI 배경 기능 추가
 
-* OpenAi API -> Unsplash API 연결 (유로 -> 무료)
-* 스타일 프롬프트 영어 번역(Google Translate)
-* 배경 이미지 자동 수집 및 저장
-* 자막 이미지(temp_text.png) 생성 기능 추가
+[x] OpenAi API -> Unsplash API 연결 (유로 -> 무료)
+[x] 스타일 프롬프트 영어 번역(Google Translate)
+[x] 배경 이미지 자동 수집 및 저장
+[x] 자막 이미지(temp_text.png) 생성 기능 추가
 
 ### 📅 Week 3: 다중 이미지 + 자막 분할 개선
 
-* 스크립트 \n 기준 → ., ", ! 등 문장 기준 분할로 개선
-*  자막 길이 자동 줄바꿈 적용
-* 이미지 여러 장에 자막 자동 분배
-* NanumGothic.ttf 폰트 적용 (한글 깨짐 해결)
+[x] 스크립트 \n 기준 → ., ", ! 등 문장 기준 분할로 개선
+[x]  자막 길이 자동 줄바꿈 적용
+[x] 이미지 여러 장에 자막 자동 분배
+[x] NanumGothic.ttf 폰트 적용 (한글 깨짐 해결)
 
 
 ## 📝 향후 추가 예정
+* UI / UX 수정 
 * 유튜브 API 연동 → 영상 자동 업로드
 * 사용자 업로드 이미지 지원
 * 스타일 프롬프트 미리보기 기능
