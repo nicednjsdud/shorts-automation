@@ -1,8 +1,8 @@
-from moviepy.editor import ImageClip, TextClip, CompositeVideoClip, vfx, AudioFileClip, concatenate_videoclips, VideoFileClip
+from moviepy.editor import ImageClip, CompositeVideoClip, AudioFileClip, concatenate_videoclips
 from gtts import gTTS
-import textwrap
 import os
-from PIL import Image, ImageDraw, ImageFont, ImageOps
+from PIL import Image, ImageDraw, ImageFont
+import re
 
 # 이 서비스는 스크립트를 받아서 짧은 동영상을 생성합니다.
 # # 필요한 라이브러리:
@@ -14,8 +14,13 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 VIDEO_SIZE = (720, 1280)  # (width, height)
 
-def split_script_by_lines(script):
-    return [line.strip() for line in script.strip().split('\n') if line.strip()]
+# 마침표, 물음표, 느낌표, 큰따옴표 등으로 문장을 분할합니다.
+#  단, 줄바꿈 문자도 함께 고려합니다.
+def split_script_by_sentences(script):
+
+    pattern = r'(?<=[.!?\"\”])\s+'
+    sentences = re.split(pattern, script)
+    return [s.strip() for s in sentences if s.strip()]
 
 
 # 동영상 클립을 생성합니다.
@@ -82,7 +87,7 @@ def process_script(script, image_paths, font_color="white", font_size="medium"):
             raise FileNotFoundError(f"이미지 경로 없음: {path}")
     
     # 1. 스크립트를 여러 부분으로 나눕니다.
-    lines = split_script_by_lines(script)
+    lines = split_script_by_sentences(script)
     total_lines = len(lines)
     num_images = len(image_paths)
     
