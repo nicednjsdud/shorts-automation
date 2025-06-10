@@ -2,7 +2,7 @@ from moviepy.editor import ImageClip, TextClip, CompositeVideoClip, vfx, AudioFi
 from gtts import gTTS
 import textwrap
 import os
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 import uuid
 
 # 이 서비스는 스크립트를 받아서 짧은 동영상을 생성합니다.
@@ -140,3 +140,6 @@ def delete_temp_files():
                 os.remove(os.path.join(temp_dir, f))
             except Exception as e:
                 print(f"⚠️ {f} 삭제 실패: {e}")
+            
+def pad_to_9_16(image: Image.Image, target_size=(720,1280)) -> Image.Image:
+    return ImageOps.fit()
