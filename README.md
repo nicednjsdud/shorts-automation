@@ -16,7 +16,11 @@ AI 기반으로 한글 스크립트를 입력하면, 자동으로 배경 이미�
 * 🖋️ 투명 자막 이미지 + 한글 폰트(NanumGothic) 사용
 * 📱 9:16 비율 영상 출력 (쇼츠용)
 * 🗑️ 임시 자막 이미지 자동 삭제
-* 📦 압축된 비디오 렌더링 (bitrate, 코덱 설정 포함)
+* 📦 압축된 비디오 렌더링 (bitrate, 코덱 설정 포함)ㄴ
+
+## 🎬 Demo Video
+
+https://github.com/user-attachments/assets/af8e9888-4366-4679-826f-ed8cf9ceaa06
 
 ## ⚙️ 전체 프로세스
 
