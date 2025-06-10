@@ -35,24 +35,24 @@ https://github.com/user-attachments/assets/215a4cda-3192-41b1-b341-8b9cf9c5c959
 
 ### 📅 Week 1: 기본 기능 구성
 
-* [x] Django 프로젝트 세팅
-* [x] 스크립트 입력 폼 작성
-* [x] 단일 이미지 + 텍스트 기반 영상 생성
-* [x] TTS(gTTS) 연결
+* ✅ Django 프로젝트 세팅
+* ✅ 스크립트 입력 폼 작성
+* ✅ 단일 이미지 + 텍스트 기반 영상 생성
+* ✅ TTS(gTTS) 연결
 
 ### 📅 Week 2: UI + AI 배경 기능 추가
 
-* [x] OpenAi API -> Unsplash API 연결 (유로 -> 무료)
-* [x] 스타일 프롬프트 영어 번역(Google Translate)
-* [x] 배경 이미지 자동 수집 및 저장
-* [x] 자막 이미지(temp_text.png) 생성 기능 추가
+* ✅ OpenAi API -> Unsplash API 연결 (유로 -> 무료)
+* ✅ 스타일 프롬프트 영어 번역(Google Translate)
+* ✅ 배경 이미지 자동 수집 및 저장
+* ✅ 자막 이미지(temp_text.png) 생성 기능 추가
 
 ### 📅 Week 3: 다중 이미지 + 자막 분할 개선
 
-* [x] 스크립트 \n 기준 → ., ", ! 등 문장 기준 분할로 개선
-* [x]  자막 길이 자동 줄바꿈 적용
-* [x] 이미지 여러 장에 자막 자동 분배
-* [x] NanumGothic.ttf 폰트 적용 (한글 깨짐 해결)
+* ✅ 스크립트 \n 기준 → ., ", ! 등 문장 기준 분할로 개선
+* ✅  자막 길이 자동 줄바꿈 적용
+* ✅ 이미지 여러 장에 자막 자동 분배
+* ✅ NanumGothic.ttf 폰트 적용 (한글 깨짐 해결)
 
 
 ## 📝 추가 예정
@@ -64,3 +64,4 @@ https://github.com/user-attachments/assets/215a4cda-3192-41b1-b341-8b9cf9c5c959
 * 사용자 업로드 이미지 지원
 * 스타일 프롬프트 미리보기 기능
 * 생성 상태 실시간 클라이언트 반영 (progress bar 등)
+* 코드 리팩토링 **
