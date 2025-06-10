@@ -3,7 +3,6 @@ from gtts import gTTS
 import textwrap
 import os
 from PIL import Image, ImageDraw, ImageFont, ImageOps
-import uuid
 
 # 이 서비스는 스크립트를 받아서 짧은 동영상을 생성합니다.
 # # 필요한 라이브러리:
@@ -47,14 +46,33 @@ def generate_text_image(text, width=720, height=250, font_size=40, font_color="b
         print("⚠️ 폰트 로딩 실패:", e)
         font = ImageFont.load_default()
 
-    wrapped_text = textwrap.fill(text, width=40)
-    draw.text((50, 50), wrapped_text, fill=font_color, font=font)
+    wrapped_text = wrap_text(text, font, width)
 
-    # 고유 파일명
-    filename = f"media/temp_text/temp_text_{uuid.uuid4().hex}.png"
+    draw.text((30, 30), wrapped_text, fill=font_color, font=font)
 
+    filename = f"media/temp_text/temp_text_{hash(text)}.png"
     img.save(filename)
     return filename
+
+# ✅ 이미지 폭 기준으로 줄바꿈 처리
+def wrap_text(text, font, max_width):
+    dummy_img = Image.new("RGB", (1, 1))
+    draw = ImageDraw.Draw(dummy_img)
+
+    lines = []
+    words = text.split()
+    line = ""
+
+    for word in words:
+        test_line = f"{line} {word}".strip()
+        line_width, _ = draw.textsize(test_line, font=font)
+        if line_width <= max_width - 40:  # 여유 20px padding
+            line = test_line
+        else:
+            lines.append(line)
+            line = word
+    lines.append(line)
+    return "\n".join(lines)
 
 # 스크립트를 처리하여 동영상을 생성합니다.
 def process_script(script, image_paths, font_color="white", font_size="medium"):
@@ -141,5 +159,3 @@ def delete_temp_files():
             except Exception as e:
                 print(f"⚠️ {f} 삭제 실패: {e}")
             
-def pad_to_9_16(image: Image.Image, target_size=(720,1280)) -> Image.Image:
-    return ImageOps.fit()
