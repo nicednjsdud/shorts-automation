@@ -54,12 +54,14 @@ def process_script(script, image_paths, font_color="white", font_size="medium"):
     video_path = "media/final_video.mp4"
     final_video.write_videofile(
         video_path,
-        fps=24,
+        fps=15,
         codec="libx264",
         audio_codec="aac",
-        bitrate="1500k",
+        bitrate="1200k", 
         threads=4,
-        preset="medium"
+        preset="ultrafast",  # ✅ 렌더링 속도 최우선
+        temp_audiofile="media/temp-audio.m4a",  # 임시 파일 경로 지정
+        remove_temp=True,
     )
 
     print("✅ 영상 생성 완료!")
