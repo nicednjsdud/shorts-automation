@@ -10,18 +10,34 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
+        
+        <hr>
 
-        {% if background_suggestions %}
-            <h3>🎞️ 추천 배경 선택</h3>
-            <div style="display: flex; gap: 10px;">
-                {% for bg in background_suggestions %}
-                    <label>
-                        <input type="radio" name="selected_background" value="{{ bg }}">
-                        <img src="/static/backgrounds/{{ bg }}" width="200">
-                    </label>
-                {% endfor %}
+        <!-- 🗣️ 화자별 음성 설정 -->
+        <h3>🗣️ 화자별 음성 설정</h3>
+        <div style="display: flex; gap: 30px;">
+            {% for speaker in "ABC" %}
+            <div>
+                <strong>{{ speaker }} 화자</strong><br>
+                <label>언어:
+                    <select name="lang_{{ speaker }}">
+                        <option value="ko">한국어</option>
+                        <option value="en">영어</option>
+                    </select>
+                </label><br>
+                <label>성별:
+                    <select name="gender_{{ speaker }}">
+                        <option value="female">여성</option>
+                        <option value="male">남성</option>
+                    </select>
+                </label>
             </div>
-        {% endif %}
+            {% endfor %}
+        </div>
+
+        <hr>
+        
+  
 
         <br>
         <button type="submit">📽️ 영상 만들기</button>
@@ -32,12 +48,5 @@
         <h2>✅ 영상이 완성되었습니다!</h2>
         <video src="{{ video_path }}" controls width="360"></video>
     {% endif %}
-
-    {% for bg in background_suggestions %}
-        <label>
-            <input type="radio" name="selected_background" value="{{ bg }}">
-         
-        </label>
-    {% endfor %}
 </body>
 </html>

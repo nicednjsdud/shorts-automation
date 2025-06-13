@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .forms import TextInputForm
-from .services.generator import process_script
+from .services.generator.processor import process_script
 from .services.image_fetcher import fetch_unsplash_images
 from shortsapp.services.translator import translate_to_english
 import os
@@ -21,6 +21,17 @@ def index(request):
             # 📸 배경 이미지 경로 지정
             image_paths = os.path.join('media', 'bg.jpg')
 
+            # 화자 설정 수집
+            speaker_settings = {}
+            for speaker in ['A', 'B', 'C']:
+                gender = request.POST.get(f"gender_{speaker}")
+                lang = request.POST.get(f"lang_{speaker}")
+                if gender and lang:
+                    speaker_settings[speaker] = {
+                        "gender": gender,
+                        "lang": lang
+                    }
+
             if ai_background:
                  # ✅ 스타일 프롬프트를 영어로 번역
                 style_prompt_en = translate_to_english(style_prompt)
@@ -32,7 +43,13 @@ def index(request):
                 pass  # 사용자가 직접 업로드한 이미지를 처리하려면 여기에 넣기
 
             # 🎥 영상 생성 실행
-            video_path = process_script(script, image_paths, font_color, font_size)
+            video_path = process_script(
+                script, 
+                image_paths, 
+                font_color, 
+                font_size,
+                speaker_settings=speaker_settings
+            )
 
     return render(request, 'index.html', {
         'form': form,
