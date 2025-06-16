@@ -30,3 +30,6 @@ video/
 # 시스템 파일
 .DS_Store
 Thumbs.db
+
+# 구글 key 추가
+.json
