@@ -32,4 +32,4 @@ video/
 Thumbs.db
 
 # 구글 key 추가
-.json
+*.json
