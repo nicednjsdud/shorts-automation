@@ -4,6 +4,7 @@ import os
 from .splitter import split_script_by_sentences
 from .video_clip import create_slide_clip
 from .cleaner import delete_temp_files
+from .tts_google import synthesize_speech
 import re
 
 # 스크립트를 처리하여 동영상을 생성합니다.
@@ -31,9 +32,18 @@ def process_script(script, image_paths, font_color="white", font_size="medium", 
         voice_info = speaker_settings.get(speaker, {'lang': 'ko', 'gender': 'female'})
 
         # 🗣️ 개별 gTTS 생성
-        tts = gTTS(text=content, lang=voice_info['lang'])  # gender 사용 불가 (gTTS 제한)
-        audio_path = f"media/audio_line_{idx}.mp3"
-        tts.save(audio_path)
+        # tts = gTTS(text=content, lang=voice_info['lang'])  # gender 사용 불가 (gTTS 제한)
+        # audio_path = f"media/audio_line_{idx}.mp3"
+        # tts.save(audio_path)
+
+        # 🔊 Google TTS 사용
+        audio_path = synthesize_speech(
+            text=content,
+            lang_code=voice_info['lang'],  # 언어 코드
+            gender=voice_info['gender'],
+            voice_name='ko-KR-Wavenet-A'
+        )
+
         audio_clip = AudioFileClip(audio_path)
         audio_clips.append(audio_clip)
 
