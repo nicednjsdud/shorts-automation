@@ -9,7 +9,6 @@ import re
 
 # 스크립트를 처리하여 동영상을 생성합니다.
 def process_script(script, image_paths, font_color="white", font_size="medium", speaker_settings=None):
-    print("🎙️ 화자별 음성 설정:", speaker_settings)
     print("🔨 영상 생성 중...")
     for path in image_paths:
         if not os.path.exists(path):
@@ -21,6 +20,7 @@ def process_script(script, image_paths, font_color="white", font_size="medium", 
     audio_clips = []
     
     current_speaker = 'A'  # 기본 화자
+    temp_audio_paths = [] # 오디오 총 길이를 알기위한 temp
 
     for idx, line in enumerate(lines):
         # 🧠 화자 구분 (예: A: ~~)
@@ -52,12 +52,23 @@ def process_script(script, image_paths, font_color="white", font_size="medium", 
             voice_name=voice_info['voice'],
             
         )
+        temp_audio_paths.append(audio_path)
 
         audio_clip = AudioFileClip(audio_path)
         audio_clips.append(audio_clip)
 
-        # 🎞️ 영상 클립
-        image_idx = idx % len(image_paths)
+    # 🔊 오디오 클립 하나로 합치기 (합치기 전 총 길이 계산)
+    final_audio = concatenate_audioclips(audio_clips)
+    total_audio_duration = final_audio.duration
+    image_change_interval = total_audio_duration / len(image_paths)
+
+    # 🎞️ 영상 클립 생성
+    elapsed_time = 0
+    for idx, (line, audio_clip) in enumerate(zip(lines, audio_clips)):
+        content = re.sub(r'^[A-Z]:\s*', '', line)  # 자막에서 화자 제거
+        image_idx = int(elapsed_time // image_change_interval)
+        image_idx = min(image_idx, len(image_paths) - 1)  # index overflow 방지
+
         video_clip = create_slide_clip(
             content,
             image_path=image_paths[image_idx],
@@ -66,12 +77,11 @@ def process_script(script, image_paths, font_color="white", font_size="medium", 
             font_color=font_color
         )
         clips.append(video_clip.set_duration(audio_clip.duration))
-    
-    # 5. 모든 클립을 합칩니다.
-    
-    # 🔊 오디오 클립 하나로 합치기
-    final_audio = concatenate_audioclips(audio_clips)
+        elapsed_time += audio_clip.duration
+ 
+    # 🔁 오디오와 영상 결합
     final_video = concatenate_videoclips(clips, method="compose")
+    final_video = final_video.set_duration(final_audio.duration).set_audio(final_audio)
 
     # 🔁 영상 길이와 오디오 길이를 강제로 일치시킴
     final_video = final_video.set_duration(final_audio.duration).set_audio(final_audio)
