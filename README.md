@@ -7,7 +7,7 @@ AI 기반으로 한글 스크립트를 입력하면, 자동으로 배경 이미�
 
 ## 🎬 Demo Video
 
-https://github.com/user-attachments/assets/215a4cda-3192-41b1-b341-8b9cf9c5c959
+https://github.com/user-attachments/assets/8d57264f-a90f-4b81-ab07-75d72eb92d35
 
 ## ✅ 프로젝트 주요 기능
 
