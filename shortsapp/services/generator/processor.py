@@ -20,19 +20,27 @@ def process_script(script, image_paths, font_color="white", font_size="medium", 
     clips = []
     audio_clips = []
     
- 
+    current_speaker = 'A'  # 기본 화자
+
     for idx, line in enumerate(lines):
         # 🧠 화자 구분 (예: A: ~~)
         match = re.match(r'^([A-Z]):\s*(.+)', line)
         if match:
             speaker, content = match.groups()
+            current_speaker = speaker
         else:
-            speaker, content = 'A', line  # 기본값
+            content = line
+            speaker = current_speaker  # 이전 화자 유지
 
-        voice_info = speaker_settings.get(speaker, {'lang': 'ko', 'gender': 'female'})
+
+        voice_info = speaker_settings.get(speaker, {
+            'lang': 'ko-KR',
+            'gender': 'FEMALE',
+            'voice': 'ko-KR-Wavenet-A'
+        })
 
         # 🗣️ 개별 gTTS 생성
-        # tts = gTTS(text=content, lang=voice_info['lang'])  # gender 사용 불가 (gTTS 제한)
+        # tts = gTTS(text=content, lang=voice_info['lang'])
         # audio_path = f"media/audio_line_{idx}.mp3"
         # tts.save(audio_path)
 
@@ -41,7 +49,8 @@ def process_script(script, image_paths, font_color="white", font_size="medium", 
             text=content,
             lang_code=voice_info['lang'],  # 언어 코드
             gender=voice_info['gender'],
-            voice_name='ko-KR-Wavenet-A'
+            voice_name=voice_info['voice'],
+            
         )
 
         audio_clip = AudioFileClip(audio_path)

@@ -3,7 +3,6 @@ import requests
 import os
 from time import sleep
 
-
 UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY")
 
 def pad_to_9_16(image: Image.Image, target_size=(720, 1280)) -> Image.Image:

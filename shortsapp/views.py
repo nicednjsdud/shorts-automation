@@ -5,6 +5,13 @@ from .services.image_fetcher import fetch_unsplash_images
 from shortsapp.services.translator import translate_to_english
 import os
 
+DEFAULT_VOICES = {
+    ('ko-KR', 'FEMALE'): 'ko-KR-Wavenet-A',
+    ('ko-KR', 'MALE'): 'ko-KR-Wavenet-B',
+    ('en-US', 'FEMALE'): 'en-US-Wavenet-C',
+    ('en-US', 'MALE'): 'en-US-Wavenet-D',
+}
+
 def index(request):
     video_path = None
     form = TextInputForm()
@@ -27,9 +34,11 @@ def index(request):
                 gender = request.POST.get(f"gender_{speaker}")
                 lang = request.POST.get(f"lang_{speaker}")
                 if gender and lang:
+                    voice_name = DEFAULT_VOICES.get((lang, gender), '')
                     speaker_settings[speaker] = {
                         "gender": gender,
-                        "lang": lang
+                        "lang": lang,
+                        "voice": voice_name
                     }
 
             if ai_background:
