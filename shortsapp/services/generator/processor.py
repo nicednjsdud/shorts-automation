@@ -62,7 +62,8 @@ def process_script(script, image_paths, font_color="white", font_size="medium", 
             image_path=image_paths[image_idx],
             duration=audio_clip.duration,
             font_size=font_size_to_points(font_size),
-            font_color=font_color
+            font_color=font_color,
+            title_text= "면접에서 캐시 스탬피드를 물어본다면?"
         )
 
         clips.append(video_clip.set_duration(audio_clip.duration))
