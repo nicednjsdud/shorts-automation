@@ -24,7 +24,7 @@ def index(request):
             ai_background = form.cleaned_data.get('ai_background', False)
             font_color = form.cleaned_data['font_color']
             font_size = form.cleaned_data['font_size']
-
+            title_text = form.cleaned_data["title_text"]
             # 📸 배경 이미지 경로 지정
             image_paths = os.path.join('media', 'bg.jpg')
 
@@ -57,7 +57,8 @@ def index(request):
                 image_paths, 
                 font_color, 
                 font_size,
-                speaker_settings=speaker_settings
+                speaker_settings=speaker_settings,
+                title_text=title_text,
             )
 
     return render(request, 'index.html', {

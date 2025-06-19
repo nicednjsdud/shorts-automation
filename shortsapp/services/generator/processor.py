@@ -6,7 +6,7 @@ from .video_clip import create_slide_clip
 from .cleaner import delete_temp_files
 from .tts_google import synthesize_speech
 
-def process_script(script, image_paths, font_color="white", font_size="medium", speaker_settings=None):
+def process_script(script, image_paths, font_color="white", font_size="medium", speaker_settings=None, title_text= ""):
     print("🔨 영상 생성 중...")
 
     # 🔍 이미지 경로 유효성 검사
@@ -49,7 +49,6 @@ def process_script(script, image_paths, font_color="white", font_size="medium", 
     final_audio = concatenate_audioclips(audio_clips)
     total_audio_duration = final_audio.duration
     image_change_interval = total_audio_duration / len(image_paths)
-    print(f"🎚️ 총 오디오 길이: {total_audio_duration:.2f}s, 이미지 전환 주기: {image_change_interval:.2f}s")
 
     # 4️⃣ 각 문장에 대응하는 영상 클립 생성 (시간 기준으로 이미지 할당)
     elapsed_time = 0
@@ -63,7 +62,7 @@ def process_script(script, image_paths, font_color="white", font_size="medium", 
             duration=audio_clip.duration,
             font_size=font_size_to_points(font_size),
             font_color=font_color,
-            title_text= "면접에서 캐시 스탬피드를 물어본다면?"
+            title_text= title_text if title_text else ""  # 타이틀 텍스트가 주어지면 전달
         )
 
         clips.append(video_clip.set_duration(audio_clip.duration))

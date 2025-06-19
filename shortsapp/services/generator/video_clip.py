@@ -6,10 +6,10 @@ import os
 VIDEO_SIZE = (720, 1280)
 
 # 동영상 클립을 생성합니다.
-def create_slide_clip(text, image_path, duration, font_size=50, font_color="black", title_text=None):
+def create_slide_clip(text, image_path, duration, font_size=50, font_color="black", title_text=""):
     # 배경 이미지 클립
     image_clip = ImageClip(image_path).set_duration(duration).resize(VIDEO_SIZE)
-
+    
     # 폰트 경로 설정
     font_path = os.path.join("shortsapp", "assets", "NanumGothic.ttf")
 

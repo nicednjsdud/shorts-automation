@@ -53,12 +53,20 @@ B: 실무형 답변, 캐시 스탬피드로 자신 있게 어필해보세요.
     style_prompt = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': '예: 면접 분위기, IT 컨퍼런스, 밝고 캐주얼한 느낌'}),
         label='원하는 영상 스타일 (설명)',
-        required=False
+        required=False,
+        initial='면접 분위기, IT 컨퍼런스, 밝고 캐주얼한 느낌'
+    )
+    title_text = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': '예: 면접에서 캐시 스탬피드를 물어본다면?'}),
+        label='영상 제목',
+        required=False,
+        initial='면접에서 캐시 스탬피드를 물어본다면?'
     )
     ai_background = forms.BooleanField(
         required=False,
         label='AI 추천 배경 사용',
-        help_text='선택 시 AI가 추천하는 배경을 사용합니다.'
+        help_text='선택 시 AI가 추천하는 배경을 사용합니다.',
+        initial= True,  # 기본값을 True로 설정하여 AI 배경 사용을 기본으로 합니다.
     )
     font_color = forms.ChoiceField(
         choices=[
@@ -80,4 +88,5 @@ B: 실무형 답변, 캐시 스탬피드로 자신 있게 어필해보세요.
         label='자막 글자 크기',
         initial='medium',
     )
+
 

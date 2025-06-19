@@ -60,6 +60,7 @@ https://github.com/user-attachments/assets/8d57264f-a90f-4b81-ab07-75d72eb92d35
 ### 📅 Week 4: 자막 분할 개선 
 
 * ✅ 각 줄마다 음성 다르게 지원( 스크립트 수정 A,B,C) - Google Cloud TTS 사용
+* ✅ Title 제목 생성
 
 ## 📝 추가 예정
 * UI / UX 수정 
