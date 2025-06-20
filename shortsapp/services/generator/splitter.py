@@ -1,32 +1,35 @@
 import re
 
+import re
+
 def split_script_by_sentences(script):
     """
-    화자 기준으로 문단을 묶어 (화자, 전체 문장) 튜플 리스트 반환
+    스크립트를 화자 + 문장 단위로 분리합니다.
+    줄바꿈(\n), 마침표(.), 물음표(?), 느낌표(!) 등 기준으로 쪼갬.
+    결과: [("A", "문장1"), ("A", "문장2"), ("B", "문장3"), ...]
     """
-    lines = script.strip().split("\n")
     results = []
-    current_speaker = None
-    buffer = []
+    current_speaker = "A"  # 기본 화자
+
+    # 줄 단위로 처리
+    lines = script.strip().splitlines()
 
     for line in lines:
-        if not line.strip():
-            continue  # 공백 줄 무시
-
-        match = re.match(r'^([A-Z]):\s*(.*)', line.strip())
+        # 화자 추출 (예: A: 내용)
+        match = re.match(r"^([A-Z]):\s*(.*)", line)
         if match:
-            if current_speaker and buffer:
-                # 이전 화자 블록 저장
-                results.append((current_speaker, " ".join(buffer)))
-                buffer = []
-            current_speaker, content = match.groups()
-            buffer.append(content)
+            speaker, content = match.groups()
+            current_speaker = speaker
         else:
-            # 동일 화자일 경우 다음 줄 계속 추가
-            buffer.append(line.strip())
+            content = line.strip()
 
-    # 마지막 화자 블록 저장
-    if current_speaker and buffer:
-        results.append((current_speaker, " ".join(buffer)))
+        # 문장 단위로 쪼개기 (마침표, 물음표, 느낌표 + \n 포함)
+        # ⚠️ 정규식에서 lookbehind와 split 사용
+        sentences = re.split(r'(?<=[.?!])\s+|\n+', content)
+        for sentence in sentences:
+            clean = sentence.strip()
+            if clean:
+                results.append((current_speaker, clean))
 
     return results
+

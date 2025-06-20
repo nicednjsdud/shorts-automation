@@ -1,10 +1,14 @@
-from moviepy.editor import AudioFileClip, concatenate_videoclips, concatenate_audioclips
+from moviepy.editor import AudioFileClip, AudioClip,concatenate_videoclips, concatenate_audioclips
 import os
 import re
+import time
+import numpy as np
+
 from .splitter import split_script_by_sentences
 from .video_clip import create_slide_clip
 from .cleaner import delete_temp_files
 from .tts_google import synthesize_speech
+
 
 def process_script(script, image_paths, font_color="white", font_size="medium", speaker_settings=None, title_text= ""):
     print("🔨 영상 생성 중...")
@@ -40,13 +44,19 @@ def process_script(script, image_paths, font_color="white", font_size="medium", 
             gender=voice_info['gender'],
             voice_name=voice_info['voice']
         )
+        time.sleep(0.5)
         temp_audio_paths.append(audio_path)
 
-        audio_clip = AudioFileClip(audio_path).set_duration(AudioFileClip(audio_path).duration)
+        audio_clip = AudioFileClip(audio_path)
         audio_clips.append(audio_clip)
+        print(f"✅ {speaker}: '{content}' 음성 생성 완료")
 
     # 3️⃣ 전체 오디오 길이 계산 및 이미지 전환 간격 설정
-    final_audio = concatenate_audioclips(audio_clips)
+    segments = [
+        clip for pair in zip(audio_clips, [make_silence()] * len(audio_clips)) for clip in pair
+    ][:-1]  # 마지막 무음 제거
+    final_audio = concatenate_audioclips(segments)
+
     total_audio_duration = final_audio.duration
     image_change_interval = total_audio_duration / len(image_paths)
 
@@ -102,3 +112,11 @@ def font_size_to_points(size):
     if size in sizes:
         return sizes[size]
     raise ValueError("Invalid font size")
+
+# 무음 오디오 클립 생성 함수
+def make_silence(duration=0.2):
+    return AudioClip(
+        lambda t: np.zeros((1, 1)) if np.isscalar(t) else np.zeros((len(t), 1)),
+        duration=duration,
+        fps=44100
+    )
