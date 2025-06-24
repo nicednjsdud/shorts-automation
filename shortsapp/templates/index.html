@@ -44,6 +44,16 @@
     </form>
 
     {% if video_path %}
+        {% if tags %}
+            <div>
+                <h3>🔖 자동 생성된 태그</h3>
+                <ul>
+                {% for tag in tags %}
+                    <li>#{{ tag }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
         <h3>🎥 영상 미리보기</h3>
         <video src="{{ video_path }}" controls style="width: 100%; max-width: 600px;"></video>
 
@@ -62,6 +72,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                document.getElementById("uploadBtn").disabled = true;
                 document.getElementById("uploadStatus").innerHTML =
                     `<p>✅ 업로드 완료! <a href="https://youtu.be/${data.video_id}" target="_blank">영상 보기</a></p>`;
                 } else {

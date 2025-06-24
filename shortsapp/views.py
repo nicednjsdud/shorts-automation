@@ -6,6 +6,7 @@ from .services.generator.processor import process_script
 from .services.image_fetcher import fetch_unsplash_images
 from shortsapp.services.translator import translate_to_english
 from shortsapp.services.youtube.uploader import upload_video
+from shortsapp.services.youtube.tags import extract_keywords
 import os
 
 DEFAULT_VOICES = {
@@ -28,6 +29,10 @@ def index(request):
             font_color = form.cleaned_data['font_color']
             font_size = form.cleaned_data['font_size']
             title_text = form.cleaned_data["title_text"]
+
+            # 🎯 태그 추출
+            generated_tags = extract_keywords(script + " " + title_text)
+            
             # 📸 배경 이미지 경로 지정
             image_paths = os.path.join('media', 'bg.jpg')
 
@@ -67,10 +72,13 @@ def index(request):
             # ✅ 세션 저장 (유튜브 업로드용)
             request.session["video_path"] = video_path
             request.session["title_text"] = title_text
+            request.session["tags"] = generated_tags
 
     return render(request, 'index.html', {
         'form': form,
         'video_path': video_path,
+        'title' : title_text,
+        'tags': generated_tags
     })
 
 
@@ -78,6 +86,7 @@ def index(request):
 def upload_to_youtube(request):
     video_path = request.session.get("video_path")
     title_text = request.session.get("title_text")
+    tags = request.session.get("generated_tags", [])
 
     if not video_path or  not os.path.exists(video_path):
         return JsonResponse({"error": "영상이 생성되지 않았습니다."}, status=400)
@@ -86,7 +95,7 @@ def upload_to_youtube(request):
         file_path=video_path,
         title=title_text,
         description="유튜브 쇼츠",
-        tags=["면접", "캐시스탬피드", "데이터베이스"],
+        tags=tags,
         category_id="22",  # People & Blogs
     )
 
