@@ -49,13 +49,12 @@ def process_script(script, image_paths, font_color="white", font_size="medium", 
 
         audio_clip = AudioFileClip(audio_path)
         audio_clips.append(audio_clip)
-        print(f"✅ {speaker}: '{content}' 음성 생성 완료")
 
     # 3️⃣ 전체 오디오 길이 계산 및 이미지 전환 간격 설정
-    segments = [
-        clip for pair in zip(audio_clips, [make_silence()] * len(audio_clips)) for clip in pair
-    ][:-1]  # 마지막 무음 제거
-    final_audio = concatenate_audioclips(segments)
+    # segments = [
+    #     clip for pair in zip(audio_clips, [make_silence()] * len(audio_clips)) for clip in pair
+    # ][:-1]  # 마지막 무음 제거
+    final_audio = concatenate_audioclips(audio_clips)
 
     total_audio_duration = final_audio.duration
     image_change_interval = total_audio_duration / len(image_paths)
