@@ -83,7 +83,7 @@ def upload_to_youtube(request):
         return JsonResponse({"error": "영상이 생성되지 않았습니다."}, status=400)
     
     video_id = upload_video(
-        video_path=video_path,
+        file_path=video_path,
         title=title_text,
         description="유튜브 쇼츠",
         tags=["면접", "캐시스탬피드", "데이터베이스"],
