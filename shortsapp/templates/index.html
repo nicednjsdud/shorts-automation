@@ -44,9 +44,32 @@
     </form>
 
     {% if video_path %}
-        <hr>
-        <h2>✅ 영상이 완성되었습니다!</h2>
-        <video src="{{ video_path }}" controls width="360"></video>
+        <h3>🎥 영상 미리보기</h3>
+        <video src="{{ video_path }}" controls style="width: 100%; max-width: 600px;"></video>
+
+        <!-- ✅ 유튜브 업로드 버튼 -->
+        <button id="uploadBtn">YouTube에 업로드</button>
+        <div id="uploadStatus"></div>
+
+        <script>
+            document.getElementById("uploadBtn").addEventListener("click", function () {
+            fetch("{% url 'upload_to_youtube' %}", {
+                method: "POST",
+                headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                document.getElementById("uploadStatus").innerHTML =
+                    `<p>✅ 업로드 완료! <a href="https://youtu.be/${data.video_id}" target="_blank">영상 보기</a></p>`;
+                } else {
+                document.getElementById("uploadStatus").textContent = "❌ 업로드 실패: " + data.error;
+                }
+            });
+            });
+        </script>
     {% endif %}
 </body>
 </html>

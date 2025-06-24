@@ -23,4 +23,5 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),  # 메인 페이지
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # 미디어 파일 서빙
+    path('upload/', views.upload_to_youtube, name='upload_to_youtube'),  # ✅ YouTube 업로드용
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

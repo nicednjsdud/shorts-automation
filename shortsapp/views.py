@@ -1,8 +1,11 @@
 from django.shortcuts import render
+from django.http import JsonResponse
+from shortsapp.services.youtube import upload_video
 from .forms import TextInputForm
 from .services.generator.processor import process_script
 from .services.image_fetcher import fetch_unsplash_images
 from shortsapp.services.translator import translate_to_english
+from shortsapp.services.youtube.uploader import upload_video
 import os
 
 DEFAULT_VOICES = {
@@ -61,7 +64,30 @@ def index(request):
                 title_text=title_text,
             )
 
+            # ✅ 세션 저장 (유튜브 업로드용)
+            request.session["video_path"] = video_path
+            request.session["title_text"] = title_text
+
     return render(request, 'index.html', {
         'form': form,
         'video_path': video_path,
     })
+
+
+# 유튜브 업로드 뷰
+def upload_to_youtube(request):
+    video_path = request.session.get("video_path")
+    title_text = request.session.get("title_text")
+
+    if not video_path or  not os.path.exists(video_path):
+        return JsonResponse({"error": "영상이 생성되지 않았습니다."}, status=400)
+    
+    video_id = upload_video(
+        video_path=video_path,
+        title=title_text,
+        description="유튜브 쇼츠",
+        tags=["면접", "캐시스탬피드", "데이터베이스"],
+        category_id="22",  # People & Blogs
+    )
+
+    return JsonResponse({"success": True, "video_id": video_id})
