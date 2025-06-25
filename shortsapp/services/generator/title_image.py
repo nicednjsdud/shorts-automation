@@ -1,7 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 import os
 
-def generate_title_image(text, width=720, height=120, font_size=35, font_color="white"):
+def generate_title_image(text, width=720, height=200, font_size=35, font_color="white"):
     os.makedirs("media/temp_text", exist_ok=True)
     img = Image.new("RGBA", (width, height), color=(0, 0, 0, 100))  # 반투명 배경
     draw = ImageDraw.Draw(img)
