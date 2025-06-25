@@ -18,6 +18,8 @@ DEFAULT_VOICES = {
 
 def index(request):
     video_path = None
+    title_text = ""
+    generated_tags = []
     form = TextInputForm()
 
     if request.method == 'POST':
@@ -29,7 +31,6 @@ def index(request):
             font_color = form.cleaned_data['font_color']
             font_size = form.cleaned_data['font_size']
             title_text = form.cleaned_data["title_text"]
-
             # 🎯 태그 추출
             generated_tags = extract_keywords(script + " " + title_text)
             
@@ -50,7 +51,7 @@ def index(request):
                     }
 
             if ai_background:
-                 # ✅ 스타일 프롬프트를 영어로 번역
+                # ✅ 스타일 프롬프트를 영어로 번역
                 style_prompt_en = translate_to_english(style_prompt)
 
                 # ✅ 번역된 영어 키워드로 이미지 자동 가져오기
@@ -77,7 +78,7 @@ def index(request):
     return render(request, 'index.html', {
         'form': form,
         'video_path': video_path,
-        'title' : title_text,
+        'title_text' : title_text,
         'tags': generated_tags
     })
 
@@ -86,7 +87,7 @@ def index(request):
 def upload_to_youtube(request):
     video_path = request.session.get("video_path")
     title_text = request.session.get("title_text")
-    tags = request.session.get("generated_tags", [])
+    tags = request.session.get("tags", [])
 
     if not video_path or  not os.path.exists(video_path):
         return JsonResponse({"error": "영상이 생성되지 않았습니다."}, status=400)
@@ -94,7 +95,7 @@ def upload_to_youtube(request):
     video_id = upload_video(
         file_path=video_path,
         title=title_text,
-        description="유튜브 쇼츠",
+        description=title_text,  # 설명은 제목과 동일하게 설정
         tags=tags,
         category_id="22",  # People & Blogs
     )
