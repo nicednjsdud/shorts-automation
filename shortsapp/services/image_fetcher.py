@@ -5,10 +5,12 @@ from time import sleep
 
 UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY")
 
+
 def pad_to_9_16(image: Image.Image, target_size=(720, 1280)) -> Image.Image:
     return ImageOps.fit(image, target_size, Image.ANTIALIAS, centering=(0.5, 0.5))
 
-def fetch_unsplash_images(query, save_dir='media', count=4):
+
+def fetch_unsplash_images(query, save_dir="media", count=4):
     if not query:
         query = "technology"  # 기본 검색어 설정
 
@@ -22,11 +24,11 @@ def fetch_unsplash_images(query, save_dir='media', count=4):
     image_paths = []
 
     for i, item in enumerate(data):
-        if 'urls' not in item:
+        if "urls" not in item:
             continue  # urls가 없으면 스킵
 
-        image_url = item['urls']['regular']
-        image_path = os.path.join(save_dir, f'bg_{i}.jpg')
+        image_url = item["urls"]["regular"]
+        image_path = os.path.join(save_dir, f"bg_{i}.jpg")
 
         # ✅ 이미지 다운로드 & 열기
         image_response = requests.get(image_url, stream=True)

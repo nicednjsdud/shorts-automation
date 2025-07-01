@@ -1,14 +1,25 @@
-
 from PIL import Image, ImageDraw, ImageFont
 import os
 
 
 # 텍스트 이미지를 생성합니다.
-def generate_text_image(text, font_path, width=720, height=250, font_size=40, font_color="black"):
+# 주어진 텍스트를 지정된 폰트와 크기로 이미지에 렌더링합니다.
+# args:
+#   text: 렌더링할 텍스트
+#   font_path: 사용할 폰트 파일 경로
+#   width: 이미지 너비 (기본값: 720)
+#   height: 이미지 높이 (기본값: 250)
+#   font_size: 폰트 크기 (기본값: 40)
+#   font_color: 폰트 색상 (기본값: "black")
+# returns:
+#   생성된 이미지 파일의 경로
+def generate_text_image(
+    text, font_path, width=720, height=250, font_size=40, font_color="black"
+):
     os.makedirs("media/temp_text", exist_ok=True)
     img = Image.new("RGBA", (width, height), color=(0, 0, 0, 180))
     draw = ImageDraw.Draw(img)
-    
+
     try:
         font = ImageFont.truetype(font_path, font_size)
     except Exception as e:
@@ -20,6 +31,7 @@ def generate_text_image(text, font_path, width=720, height=250, font_size=40, fo
     filename = f"media/temp_text/temp_text_{hash(text)}.png"
     img.save(filename)
     return filename
+
 
 def wrap_text(text, font, max_width):
     dummy_img = Image.new("RGB", (1, 1))

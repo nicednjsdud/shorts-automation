@@ -1,8 +1,9 @@
 import os
 
-# media/temp_text 폴더 정리
+
+# media/temp_text folder 
 def delete_temp_files():
-   
+
     temp_dir = "media/temp_text"
     if os.path.exists(temp_dir):
         for f in os.listdir(temp_dir):

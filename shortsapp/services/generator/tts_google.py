@@ -6,8 +6,15 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "google-credentials.json"
 # Google TTS 클라이언트
 client = texttospeech.TextToSpeechClient()
 
+
 # 음성 생성 함수
-def synthesize_speech(text, lang_code="ko-KR", gender="FEMALE", voice_name=None, out_path="media/output.mp3"):
+def synthesize_speech(
+    text,
+    lang_code="ko-KR",
+    gender="FEMALE",
+    voice_name=None,
+    out_path="media/output.mp3",
+):
 
     # 입력
     synthesis_input = texttospeech.SynthesisInput(text=text)
@@ -16,13 +23,15 @@ def synthesize_speech(text, lang_code="ko-KR", gender="FEMALE", voice_name=None,
     gender_map = {
         "MALE": texttospeech.SsmlVoiceGender.MALE,
         "FEMALE": texttospeech.SsmlVoiceGender.FEMALE,
-        "NEUTRAL": texttospeech.SsmlVoiceGender.NEUTRAL
+        "NEUTRAL": texttospeech.SsmlVoiceGender.NEUTRAL,
     }
 
     voice = texttospeech.VoiceSelectionParams(
-        language_code = lang_code,
-        name = voice_name or "",
-        ssml_gender = gender_map.get(gender.upper(), texttospeech.SsmlVoiceGender.NEUTRAL)
+        language_code=lang_code,
+        name=voice_name or "",
+        ssml_gender=gender_map.get(
+            gender.upper(), texttospeech.SsmlVoiceGender.NEUTRAL
+        ),
     )
 
     # 출력포맷
@@ -32,9 +41,7 @@ def synthesize_speech(text, lang_code="ko-KR", gender="FEMALE", voice_name=None,
 
     # 요청
     response = client.synthesize_speech(
-        input=synthesis_input,
-        voice=voice,
-        audio_config=audio_config
+        input=synthesis_input, voice=voice, audio_config=audio_config
     )
 
     #  저장
@@ -53,5 +60,5 @@ synthesize_speech(
     lang_code="ko-KR",
     gender="FEMALE",
     voice_name="ko-KR-Wavenet-A",
-    out_path="media/test_audio.mp3"
+    out_path="media/test_audio.mp3",
 )

@@ -1,4 +1,9 @@
-from moviepy.editor import AudioFileClip, AudioClip,concatenate_videoclips, concatenate_audioclips
+from moviepy.editor import (
+    AudioFileClip,
+    AudioClip,
+    concatenate_videoclips,
+    concatenate_audioclips,
+)
 import os
 import re
 import time
@@ -10,14 +15,21 @@ from .cleaner import delete_temp_files
 from .tts_google import synthesize_speech
 
 
-def process_script(script, image_paths, font_color="white", font_size="medium", speaker_settings=None, title_text= ""):
+def process_script(
+    script,
+    image_paths,
+    font_color="white",
+    font_size="medium",
+    speaker_settings=None,
+    title_text="",
+):
     print("🔨 영상 생성 중...")
 
     # 🔍 이미지 경로 유효성 검사
     for path in image_paths:
         if not os.path.exists(path):
             raise FileNotFoundError(f"이미지 경로 없음: {path}")
-    
+
     # 1️⃣ 스크립트 문장 단위로 분할
     lines = split_script_by_sentences(script)
     if not lines:
@@ -29,20 +41,18 @@ def process_script(script, image_paths, font_color="white", font_size="medium", 
 
     # 2️⃣ 각 문장에 대해 음성 생성 및 오디오 클립 준비
     for idx, (speaker, content) in enumerate(lines):
- 
+
         # 🗣️ 화자 설정 불러오기
-        voice_info = speaker_settings.get(speaker, {
-            'lang': 'ko-KR',
-            'gender': 'FEMALE',
-            'voice': 'ko-KR-Wavenet-A'
-        })
+        voice_info = speaker_settings.get(
+            speaker, {"lang": "ko-KR", "gender": "FEMALE", "voice": "ko-KR-Wavenet-A"}
+        )
 
         # 🔊 Google TTS로 오디오 생성
         audio_path = synthesize_speech(
             text=content,
-            lang_code=voice_info['lang'],
-            gender=voice_info['gender'],
-            voice_name=voice_info['voice']
+            lang_code=voice_info["lang"],
+            gender=voice_info["gender"],
+            voice_name=voice_info["voice"],
         )
         time.sleep(0.5)
         temp_audio_paths.append(audio_path)
@@ -62,8 +72,10 @@ def process_script(script, image_paths, font_color="white", font_size="medium", 
     # 4️⃣ 각 문장에 대응하는 영상 클립 생성 (시간 기준으로 이미지 할당)
     elapsed_time = 0
     for (speaker, content), audio_clip in zip(lines, audio_clips):
-        clean_content = re.sub(r'^[A-Z]:\s*', '', content)
-        image_idx = min(int(elapsed_time // image_change_interval), len(image_paths) - 1)
+        clean_content = re.sub(r"^[A-Z]:\s*", "", content)
+        image_idx = min(
+            int(elapsed_time // image_change_interval), len(image_paths) - 1
+        )
 
         video_clip = create_slide_clip(
             clean_content,
@@ -71,7 +83,9 @@ def process_script(script, image_paths, font_color="white", font_size="medium", 
             duration=audio_clip.duration,
             font_size=font_size_to_points(font_size),
             font_color=font_color,
-            title_text= title_text if title_text else ""  # 타이틀 텍스트가 주어지면 전달
+            title_text=(
+                title_text if title_text else ""
+            ),  # 타이틀 텍스트가 주어지면 전달
         )
 
         clips.append(video_clip.set_duration(audio_clip.duration))
@@ -92,7 +106,7 @@ def process_script(script, image_paths, font_color="white", font_size="medium", 
         threads=4,
         preset="ultrafast",
         temp_audiofile="media/temp-audio.m4a",
-        remove_temp=True
+        remove_temp=True,
     )
 
     print("✅ 영상 생성 완료!")
@@ -105,6 +119,7 @@ def process_script(script, image_paths, font_color="white", font_size="medium", 
 
     return video_path
 
+
 # 글자 크기를 pt 단위로 변환
 def font_size_to_points(size):
     sizes = {"small": 20, "medium": 30, "large": 40}
@@ -112,10 +127,11 @@ def font_size_to_points(size):
         return sizes[size]
     raise ValueError("Invalid font size")
 
+
 # 무음 오디오 클립 생성 함수
 def make_silence(duration=0.2):
     return AudioClip(
         lambda t: np.zeros((1, 1)) if np.isscalar(t) else np.zeros((len(t), 1)),
         duration=duration,
-        fps=44100
+        fps=44100,
     )

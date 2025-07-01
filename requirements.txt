@@ -4,8 +4,10 @@ Django==5.2.1
 # Google Cloud TTS
 google-cloud-texttospeech==2.15.0
 
-# Google OAuth2
+# Google Client 
 google-api-python-client==2.113.0
+
+# Google OAuth2
 google-auth==2.29.0
 google-auth-oauthlib==1.0.0
 google-auth-httplib2==0.1.0
