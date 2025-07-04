@@ -7,6 +7,8 @@ from .services.image_fetcher import fetch_unsplash_images
 from shortsapp.services.translator import translate_to_english
 from shortsapp.services.youtube.uploader import upload_video
 from shortsapp.services.youtube.tags import extract_keywords
+from shortsapp.services.youtube.auth import get_authenticated_service
+from shortsapp.services.youtube.comments import post_youtube_comment
 import os
 
 DEFAULT_VOICES = {
@@ -89,9 +91,13 @@ def upload_to_youtube(request):
     title_text = request.session.get("title_text")
     tags = request.session.get("tags", [])
 
+    comment_text = request.POST.get("comment_text", "").strip()
+
     if not video_path or  not os.path.exists(video_path):
         return JsonResponse({"error": "영상이 생성되지 않았습니다."}, status=400)
     
+    youtube = get_authenticated_service()
+
     video_id = upload_video(
         file_path=video_path,
         title=title_text,
@@ -99,5 +105,12 @@ def upload_to_youtube(request):
         tags=tags,
         category_id="22",  # People & Blogs
     )
+
+    default_comment = "이 영상은 ShortsApp을 통해 생성되었습니다. 더 많은 정보를 원하시면 댓글을 남겨주세요!"
+
+    final_comment = comment_text if comment_text else default_comment
+
+    # 유튜브 댓글 작성
+    post_youtube_comment(youtube, video_id, final_comment)
 
     return JsonResponse({"success": True, "video_id": video_id})

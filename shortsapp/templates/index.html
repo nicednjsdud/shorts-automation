@@ -56,6 +56,12 @@
         {% endif %}
         <h3>🎥 영상 미리보기</h3>
         <video src="{{ video_path }}" controls style="width: 100%; max-width: 600px;"></video>
+        
+        <h3>📜 영상 첫 댓글 입력</h3>
+        <textarea 
+            name="comment_text" 
+            placeholder="영상 첫 댓글 내용을 입력하세요"
+        >이 영상과 관련된 자세한 설명은 블로그에서 보세요! 👉 https://nicednjsdud.github.io/backend/Backend-cpu_scheduling_blog</textarea>
 
         <!-- ✅ 유튜브 업로드 버튼 -->
         <button id="uploadBtn">YouTube에 업로드</button>
