@@ -8,7 +8,7 @@ from googleapiclient.discovery import build
 #   comment_text: 작성할 댓글 내용
 # Returns:
 #   dict: 댓글 API 응답 결과
-def post_youtube_comment(youtube, video_id, comment_text):
+def post_comment(youtube, video_id, comment_text):
     try:
         request = youtube.commentThreads().insert(
             part="snippet",

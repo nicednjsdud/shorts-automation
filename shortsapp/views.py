@@ -1,14 +1,13 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from shortsapp.services.youtube import upload_video
 from .forms import TextInputForm
-from .services.generator.processor import process_script
-from .services.image_fetcher import fetch_unsplash_images
+from shortsapp.services.generator.processor import process_script
+from shortsapp.services.image_fetcher import fetch_unsplash_images
 from shortsapp.services.translator import translate_to_english
 from shortsapp.services.youtube.uploader import upload_video
+from shortsapp.services.youtube.comments import post_comment
 from shortsapp.services.youtube.tags import extract_keywords
 from shortsapp.services.youtube.auth import get_authenticated_service
-from shortsapp.services.youtube.comments import post_youtube_comment
 import os
 
 DEFAULT_VOICES = {
@@ -20,7 +19,6 @@ DEFAULT_VOICES = {
 
 def index(request):
     video_path = None
-    title_text = ""
     generated_tags = []
     form = TextInputForm()
 
@@ -29,17 +27,22 @@ def index(request):
         if form.is_valid():
             script = form.cleaned_data['script']
             style_prompt = form.cleaned_data['style_prompt']
-            ai_background = form.cleaned_data.get('ai_background', False)
+            ai_background = form.cleaned_data['ai_background']
             font_color = form.cleaned_data['font_color']
             font_size = form.cleaned_data['font_size']
-            title_text = form.cleaned_data["title_text"]
-            # 🎯 태그 추출
-            generated_tags = extract_keywords(script + " " + title_text)
-            
-            # 📸 배경 이미지 경로 지정
-            image_paths = os.path.join('media', 'bg.jpg')
+            title_text = form.cleaned_data['title_text']
+            comment_text = form.cleaned_data['comment_text']
 
-            # 화자 설정 수집
+            # 태그 생성
+            generated_tags = extract_keywords(script + " " + title_text)
+
+            # 이미지 경로 준비
+            image_paths = os.path.join('media', 'bg.jpg')
+            if ai_background:
+                style_prompt_en = translate_to_english(style_prompt)
+                image_paths = fetch_unsplash_images(style_prompt_en, save_dir='media', count=6)
+
+            # 화자별 음성 설정
             speaker_settings = {}
             for speaker in ['A', 'B', 'C']:
                 gender = request.POST.get(f"gender_{speaker}")
@@ -52,65 +55,55 @@ def index(request):
                         "voice": voice_name
                     }
 
-            if ai_background:
-                # ✅ 스타일 프롬프트를 영어로 번역
-                style_prompt_en = translate_to_english(style_prompt)
-
-                # ✅ 번역된 영어 키워드로 이미지 자동 가져오기
-                image_paths = fetch_unsplash_images(style_prompt_en, save_dir='media', count=6)
-            else:
-                # 🔁 기본 배경 또는 선택 배경 사용할 경우 (원한다면 수정 가능)
-                pass  # 사용자가 직접 업로드한 이미지를 처리하려면 여기에 넣기
-
-            # 🎥 영상 생성 실행
+            # 영상 생성
             video_path = process_script(
-                script, 
-                image_paths, 
-                font_color, 
-                font_size,
-                speaker_settings=speaker_settings,
-                title_text=title_text,
+                script, image_paths, font_color, font_size,
+                speaker_settings=speaker_settings, title_text=title_text,
             )
-
-            # ✅ 세션 저장 (유튜브 업로드용)
+            print("comment_text:", comment_text)
+            # 세션 저장
             request.session["video_path"] = video_path
             request.session["title_text"] = title_text
             request.session["tags"] = generated_tags
+            request.session["comment_text"] = comment_text
 
     return render(request, 'index.html', {
         'form': form,
         'video_path': video_path,
-        'title_text' : title_text,
-        'tags': generated_tags
+        'tags': generated_tags,
     })
 
-
-# 유튜브 업로드 뷰
 def upload_to_youtube(request):
     video_path = request.session.get("video_path")
     title_text = request.session.get("title_text")
     tags = request.session.get("tags", [])
+    comment_text = request.session.get("comment_text", "")
 
-    comment_text = request.POST.get("comment_text", "").strip()
-
-    if not video_path or  not os.path.exists(video_path):
+    if not video_path or not os.path.exists(video_path):
         return JsonResponse({"error": "영상이 생성되지 않았습니다."}, status=400)
-    
-    youtube = get_authenticated_service()
 
-    video_id = upload_video(
-        file_path=video_path,
-        title=title_text,
-        description=title_text,  # 설명은 제목과 동일하게 설정
-        tags=tags,
-        category_id="22",  # People & Blogs
-    )
+    try:
+        video_id = upload_video(
+            file_path=video_path,
+            title=title_text,
+            description="유튜브 쇼츠",
+            tags=tags,
+            category_id="22",
+        )
 
-    default_comment = "이 영상은 ShortsApp을 통해 생성되었습니다. 더 많은 정보를 원하시면 댓글을 남겨주세요!"
+        youtube = get_authenticated_service()
 
-    final_comment = comment_text if comment_text else default_comment
+        if comment_text:
+            post_comment(youtube, video_id, comment_text)
+            
 
-    # 유튜브 댓글 작성
-    post_youtube_comment(youtube, video_id, final_comment)
+        print("✅ 유튜브 업로드 성공:", video_id)
+        # 세션에서 비디오 경로 제거
+        del request.session["video_path"]
+        del request.session["title_text"]
+        del request.session["tags"]
+        del request.session["comment_text"]
 
-    return JsonResponse({"success": True, "video_id": video_id})
+        return JsonResponse({"success": True, "video_id": video_id})
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=500)

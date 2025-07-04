@@ -10,10 +10,8 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        
-        <hr>
 
-        <!-- 🗣️ 화자별 음성 설정 -->
+        <hr>
         <h3>🗣️ 화자별 음성 설정</h3>
         <div style="display: flex; gap: 30px;">
             {% for speaker in "ABC" %}
@@ -36,10 +34,7 @@
         </div>
 
         <hr>
-        
-  
-
-        <br>
+        <br><br>
         <button type="submit">📽️ 영상 만들기</button>
     </form>
 
@@ -54,37 +49,31 @@
                 </ul>
             </div>
         {% endif %}
+
         <h3>🎥 영상 미리보기</h3>
         <video src="{{ video_path }}" controls style="width: 100%; max-width: 600px;"></video>
-        
-        <h3>📜 영상 첫 댓글 입력</h3>
-        <textarea 
-            name="comment_text" 
-            placeholder="영상 첫 댓글 내용을 입력하세요"
-        >이 영상과 관련된 자세한 설명은 블로그에서 보세요! 👉 https://nicednjsdud.github.io/backend/Backend-cpu_scheduling_blog</textarea>
 
-        <!-- ✅ 유튜브 업로드 버튼 -->
+        <h3>☁️ YouTube 업로드</h3>
         <button id="uploadBtn">YouTube에 업로드</button>
         <div id="uploadStatus"></div>
 
         <script>
             document.getElementById("uploadBtn").addEventListener("click", function () {
-            fetch("{% url 'upload_to_youtube' %}", {
-                method: "POST",
-                headers: {
-                "X-CSRFToken": "{{ csrf_token }}"
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                document.getElementById("uploadBtn").disabled = true;
-                document.getElementById("uploadStatus").innerHTML =
-                    `<p>✅ 업로드 완료! <a href="https://youtu.be/${data.video_id}" target="_blank">영상 보기</a></p>`;
-                } else {
-                document.getElementById("uploadStatus").textContent = "❌ 업로드 실패: " + data.error;
-                }
-            });
+                fetch("{% url 'upload_to_youtube' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById("uploadStatus").innerHTML =
+                            `<p>✅ 업로드 완료! <a href="https://youtu.be/${data.video_id}" target="_blank">영상 보기</a></p>`;
+                    } else {
+                        document.getElementById("uploadStatus").textContent = "❌ 업로드 실패: " + data.error;
+                    }
+                });
             });
         </script>
     {% endif %}
