@@ -61,12 +61,17 @@ https://github.com/user-attachments/assets/8d57264f-a90f-4b81-ab07-75d72eb92d35
 
 * ✅ 각 줄마다 음성 다르게 지원( 스크립트 수정 A,B,C) - Google Cloud TTS 사용
 * ✅ Title 제목 생성
-* ✅ 유투브 API 연동
-* ✅ 유투브 업로드시 태그 AI 활용 (yake)
 
 ### 📅 Week 5: 유투브 API
 
+* ✅ 유투브 API 연동
 * ✅ 유투브 첫댓글 지원
+* ✅ 유투브 업로드시 태그 AI 활용 (yake)
+
+### 📅 Week 6: 피드백 반영
+
+* ✅ 음성 속도 개선 (1 -> 1.3)
+* ✅ 자막 이미지, 타이틀 이미지 위치 수정 ( 가시성 좋게 )
 
 ## 📝 추가 예정
 * UI / UX 수정 
@@ -74,3 +79,4 @@ https://github.com/user-attachments/assets/8d57264f-a90f-4b81-ab07-75d72eb92d35
 * 사용자 업로드 이미지 지원
 * 스타일 프롬프트 미리보기 기능
 * 생성 상태 실시간 클라이언트 반영 (progress bar 등)
+* 이미지 -> 동영상으로 변경
