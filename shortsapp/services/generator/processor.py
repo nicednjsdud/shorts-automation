@@ -53,6 +53,7 @@ def process_script(
             lang_code=voice_info["lang"],
             gender=voice_info["gender"],
             voice_name=voice_info["voice"],
+            speaking_rate=voice_info.get('speaking_rate', 1.3)
         )
         time.sleep(0.5)
         temp_audio_paths.append(audio_path)

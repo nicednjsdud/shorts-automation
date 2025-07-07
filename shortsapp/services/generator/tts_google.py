@@ -14,6 +14,7 @@ def synthesize_speech(
     gender="FEMALE",
     voice_name=None,
     out_path="media/output.mp3",
+    speaking_rate=1.3,
 ):
 
     # 입력
@@ -36,7 +37,8 @@ def synthesize_speech(
 
     # 출력포맷
     audio_config = texttospeech.AudioConfig(
-        audio_encoding=texttospeech.AudioEncoding.MP3
+        audio_encoding=texttospeech.AudioEncoding.MP3,
+        speaking_rate=speaking_rate,
     )
 
     # 요청

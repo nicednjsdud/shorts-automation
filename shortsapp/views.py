@@ -52,7 +52,8 @@ def index(request):
                     speaker_settings[speaker] = {
                         "gender": gender,
                         "lang": lang,
-                        "voice": voice_name
+                        "voice": voice_name,
+                        'speaking_rate': 1.3,
                     }
 
             # 영상 생성
