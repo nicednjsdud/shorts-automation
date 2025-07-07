@@ -1,5 +1,5 @@
 from moviepy.editor import ImageClip, CompositeVideoClip
-from .subtitle_image import generate_text_image
+from .subtitle_image import generate_subtitle_text_image
 from .title_image import generate_title_image
 import os
 
@@ -20,7 +20,7 @@ def create_slide_clip(
     zoom_clip = image_clip.resize(lambda t: 1 + 0.0002 * t).set_position("center")
 
     # 🆕 텍스트 이미지를 만들어 클립으로 전환
-    text_img_path = generate_text_image(
+    text_img_path = generate_subtitle_text_image(
         text,
         font_path=font_path,
         width=VIDEO_SIZE[0],

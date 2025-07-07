@@ -13,11 +13,11 @@ import os
 #   font_color: 폰트 색상 (기본값: "black")
 # returns:
 #   생성된 이미지 파일의 경로
-def generate_text_image(
+def generate_subtitle_text_image(
     text, font_path, width=720, height=250, font_size=40, font_color="black"
 ):
     os.makedirs("media/temp_text", exist_ok=True)
-    img = Image.new("RGBA", (width, height), color=(0, 0, 0, 180))
+    img = Image.new("RGBA", (width, height), color=(0, 0, 0, 220))
     draw = ImageDraw.Draw(img)
 
     try:
@@ -27,7 +27,15 @@ def generate_text_image(
         font = ImageFont.load_default()
 
     wrapped_text = wrap_text(text, font, width)
-    draw.text((30, 30), wrapped_text, fill=font_color, font=font)
+
+    text_width, text_height = draw.multiline_textsize(wrapped_text, font=font)
+    
+    x = (width - text_width) // 2
+    y = (height - text_height) // 2 - 100
+    y = max(10, y) 
+
+    draw.multiline_text((x, y), wrapped_text, fill=font_color, font=font, align="center")
+
     filename = f"media/temp_text/temp_text_{hash(text)}.png"
     img.save(filename)
     return filename
