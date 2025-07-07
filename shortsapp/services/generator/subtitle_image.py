@@ -14,7 +14,7 @@ import os
 # returns:
 #   생성된 이미지 파일의 경로
 def generate_subtitle_text_image(
-    text, font_path, width=720, height=250, font_size=40, font_color="black"
+    text, font_path, width=720, height=500, font_size=40, font_color="black"
 ):
     os.makedirs("media/temp_text", exist_ok=True)
     img = Image.new("RGBA", (width, height), color=(0, 0, 0, 220))

@@ -123,7 +123,7 @@ def process_script(
 
 # 글자 크기를 pt 단위로 변환
 def font_size_to_points(size):
-    sizes = {"small": 20, "medium": 30, "large": 40}
+    sizes = {"small": 30, "medium": 35, "large": 40}
     if size in sizes:
         return sizes[size]
     raise ValueError("Invalid font size")
