@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>유튜브 쇼츠 자동 생성기</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <script src="../static/js/script.js"></script> 
 </head>
 <body>
-    <h1>🎬 쇼츠 생성기</h1>
+    <h1>🎬 유튜브 쇼츠 자동 생성기</h1>
 
     <form method="post">
         {% csrf_token %}
@@ -13,7 +15,7 @@
 
         <hr>
         <h3>🗣️ 화자별 음성 설정</h3>
-        <div style="display: flex; gap: 30px;">
+        <div class="speaker-settings">
             {% for speaker in "ABC" %}
             <div>
                 <strong>{{ speaker }} 화자</strong><br>
@@ -33,10 +35,13 @@
             {% endfor %}
         </div>
 
-        <hr>
-        <br><br>
+        <br>
         <button type="submit">📽️ 영상 만들기</button>
     </form>
+
+    <div id="genProgressContainer" style="display: none;">
+        <div id="genProgressBar"></div>
+    </div>
 
     {% if video_path %}
         {% if tags %}
@@ -53,29 +58,14 @@
         <h3>🎥 영상 미리보기</h3>
         <video src="{{ video_path }}" controls style="width: 100%; max-width: 600px;"></video>
 
+        <div id="progressContainer" style="display:none;">
+            <div id="progressBar"></div>
+        </div>
+
         <h3>☁️ YouTube 업로드</h3>
         <button id="uploadBtn">YouTube에 업로드</button>
         <div id="uploadStatus"></div>
 
-        <script>
-            document.getElementById("uploadBtn").addEventListener("click", function () {
-                fetch("{% url 'upload_to_youtube' %}", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": "{{ csrf_token }}"
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById("uploadStatus").innerHTML =
-                            `<p>✅ 업로드 완료! <a href="https://youtu.be/${data.video_id}" target="_blank">영상 보기</a></p>`;
-                    } else {
-                        document.getElementById("uploadStatus").textContent = "❌ 업로드 실패: " + data.error;
-                    }
-                });
-            });
-        </script>
     {% endif %}
 </body>
 </html>

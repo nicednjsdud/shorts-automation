@@ -19,8 +19,8 @@ DEFAULT_VOICES = {
 
 def index(request):
     video_path = None
-    generated_tags = []
     form = TextInputForm()
+    generated_tags = []
 
     if request.method == 'POST':
         form = TextInputForm(request.POST)
@@ -33,16 +33,21 @@ def index(request):
             title_text = form.cleaned_data['title_text']
             comment_text = form.cleaned_data['comment_text']
 
+            # 진행 상태 초기화
+            request.session["progress"] = 0
+            request.session.modified = True
+
             # 태그 생성
             generated_tags = extract_keywords(script + " " + title_text)
 
             # 이미지 경로 준비
-            image_paths = os.path.join('media', 'bg.jpg')
             if ai_background:
                 style_prompt_en = translate_to_english(style_prompt)
                 image_paths = fetch_unsplash_images(style_prompt_en, save_dir='media', count=6)
+            else:
+                image_paths = [os.path.join('media', 'bg.jpg')] * 6
 
-            # 화자별 음성 설정
+            # 화자별 설정
             speaker_settings = {}
             for speaker in ['A', 'B', 'C']:
                 gender = request.POST.get(f"gender_{speaker}")
@@ -53,24 +58,35 @@ def index(request):
                         "gender": gender,
                         "lang": lang,
                         "voice": voice_name,
-                        'speaking_rate': 1.3,
+                        'speaking_rate': 1.3,  # 속도 조절
                     }
+
+            # 진행률 예시로 업데이트
+            request.session["progress"] = 20
+            request.session.modified = True
 
             # 영상 생성
             video_path = process_script(
-                script, image_paths, font_color, font_size,
-                speaker_settings=speaker_settings, title_text=title_text,
+                script,
+                image_paths,
+                font_color,
+                font_size,
+                speaker_settings=speaker_settings,
+                title_text=title_text,
+                progress_session=request.session,  # 필요하면 processor에서 progress 갱신
             )
-            print("comment_text:", comment_text)
-            # 세션 저장
+
+            # 진행 완료
+            request.session["progress"] = 100
             request.session["video_path"] = video_path
             request.session["title_text"] = title_text
             request.session["tags"] = generated_tags
             request.session["comment_text"] = comment_text
+            request.session.modified = True
 
     return render(request, 'index.html', {
         'form': form,
-        'video_path': video_path,
+        'video_path': request.session.get("video_path"),
         'tags': generated_tags,
     })
 
@@ -96,15 +112,17 @@ def upload_to_youtube(request):
 
         if comment_text:
             post_comment(youtube, video_id, comment_text)
-            
 
-        print("✅ 유튜브 업로드 성공:", video_id)
-        # 세션에서 비디오 경로 제거
-        del request.session["video_path"]
-        del request.session["title_text"]
-        del request.session["tags"]
-        del request.session["comment_text"]
+        # 세션 초기화
+        for key in ["video_path", "title_text", "tags", "comment_text"]:
+            if key in request.session:
+                del request.session[key]
+        request.session.modified = True
 
         return JsonResponse({"success": True, "video_id": video_id})
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)}, status=500)
+
+def get_progress(request):
+    progress = request.session.get("progress", 0)
+    return JsonResponse({"progress": progress})

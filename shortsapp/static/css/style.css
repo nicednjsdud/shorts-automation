@@ -1,0 +1,92 @@
+body {
+    font-family: 'Pretendard', sans-serif;
+    margin: 0 auto;
+    max-width: 900px;
+    padding: 20px;
+    background-color: #f5f5f7;
+    color: #333;
+}
+h1 {
+    text-align: center;
+    color: #ff5252;
+}
+form {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+button {
+    background-color: #ff5252;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #e04646;
+}
+hr {
+    margin: 30px 0;
+}
+.speaker-settings {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+.speaker-settings div {
+    flex: 1;
+    min-width: 150px;
+}
+video {
+    margin-top: 20px;
+    border-radius: 8px;
+}
+ul {
+    list-style: none;
+    padding: 0;
+}
+li {
+    display: inline-block;
+    background: #eee;
+    padding: 5px 10px;
+    border-radius: 4px;
+    margin: 5px;
+}
+#uploadBtn {
+    margin-top: 15px;
+}
+#uploadStatus {
+    margin-top: 10px;
+    font-weight: bold;
+}
+#progressContainer {
+    width: 100%;
+    background: #ddd;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 15px;
+}
+#progressBar {
+    height: 20px;
+    width: 0;
+    background: #ff5252;
+    transition: width 0.4s ease;
+}
+#genProgressContainer,
+#uploadProgressContainer {
+    width: 100%;
+    background: #ddd;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 15px;
+}
+#genProgressBar,
+#uploadProgressBar {
+    height: 20px;
+    width: 0;
+    background: #ff5252;
+    transition: width 0.4s ease;
+}
