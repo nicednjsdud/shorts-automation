@@ -14,7 +14,7 @@ def synthesize_speech(
     gender="FEMALE",
     voice_name=None,
     out_path="media/output.mp3",
-    speaking_rate=1.3,
+    speaking_rate=1.4,
 ):
 
     # 입력

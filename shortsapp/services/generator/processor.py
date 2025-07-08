@@ -39,7 +39,7 @@ def process_script(
 
         # 🗣️ 화자 설정 불러오기
         voice_info = speaker_settings.get(
-            speaker, {"lang": "ko-KR", "gender": "FEMALE", "voice": "ko-KR-Wavenet-A", "speaking_rate": 1.3}
+            speaker, {"lang": "ko-KR", "gender": "FEMALE", "voice": "ko-KR-Wavenet-A", "speaking_rate": 1.4}
         )
 
         audio_path = synthesize_speech(
@@ -47,7 +47,7 @@ def process_script(
             lang_code=voice_info["lang"],
             gender=voice_info["gender"],
             voice_name=voice_info["voice"],
-            speaking_rate=voice_info.get("speaking_rate", 1.3),
+            speaking_rate=voice_info.get("speaking_rate", 1.4),
         )
         time.sleep(0.5)
         temp_audio_paths.append(audio_path)

@@ -58,7 +58,7 @@ def index(request):
                         "gender": gender,
                         "lang": lang,
                         "voice": voice_name,
-                        'speaking_rate': 1.3,  # 속도 조절
+                        'speaking_rate': 1.4,  # 속도 조절
                     }
 
             # 진행률 예시로 업데이트
