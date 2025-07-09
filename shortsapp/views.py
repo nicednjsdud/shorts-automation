@@ -8,6 +8,7 @@ from shortsapp.services.youtube.uploader import upload_video
 from shortsapp.services.youtube.comments import post_comment
 from shortsapp.services.youtube.tags import extract_keywords
 from shortsapp.services.youtube.auth import get_authenticated_service
+from shortsapp.services.generator.splitter import split_script_by_sentences
 import os
 
 DEFAULT_VOICES = {
@@ -40,12 +41,17 @@ def index(request):
             # 태그 생성
             generated_tags = extract_keywords(script + " " + title_text)
 
+            # 1️⃣ 스크립트 문장 단위로 분할
+            lines = split_script_by_sentences(script)
+            if not lines:
+                raise ValueError("스크립트에 문장이 없습니다.")
+
             # 이미지 경로 준비
             if ai_background:
                 style_prompt_en = translate_to_english(style_prompt)
-                image_paths = fetch_unsplash_images(style_prompt_en, save_dir='media', count=6)
+                image_paths = fetch_unsplash_images(style_prompt_en, save_dir='media', count=len(lines))
             else:
-                image_paths = [os.path.join('media', 'bg.jpg')] * 6
+                image_paths = [os.path.join('media', 'bg.jpg')] * len(lines)
 
             # 화자별 설정
             speaker_settings = {}
@@ -67,7 +73,7 @@ def index(request):
 
             # 영상 생성
             video_path = process_script(
-                script,
+                lines,
                 image_paths,
                 font_color,
                 font_size,

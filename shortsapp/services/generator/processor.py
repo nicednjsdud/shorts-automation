@@ -4,13 +4,12 @@ import re
 import time
 import numpy as np
 
-from .splitter import split_script_by_sentences
 from .video_clip import create_slide_clip
 from .cleaner import delete_temp_files
 from .tts_google import synthesize_speech
 
 def process_script(
-    script,
+    lines,
     image_paths,
     font_color="white",
     font_size="medium",
@@ -20,15 +19,10 @@ def process_script(
 ):
     print("🔨 영상 생성 중...")
 
-    # 🔍 이미지 경로 유효성 검사
+    # 1️⃣ 이미지 경로 유효성 검사
     for path in image_paths:
         if not os.path.exists(path):
             raise FileNotFoundError(f"이미지 경로 없음: {path}")
-
-    # 1️⃣ 스크립트 문장 단위로 분할
-    lines = split_script_by_sentences(script)
-    if not lines:
-        raise ValueError("스크립트에 문장이 없습니다.")
 
     clips = []
     audio_clips = []
