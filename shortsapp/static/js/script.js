@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const uploadBtn = document.getElementById("uploadBtn");
-    const uploadProgressContainer = document.getElementById("uploadProgressContainer");
-    const uploadProgressBar = document.getElementById("uploadProgressBar");
+    const uploadProgressContainer = document.getElementById("progressContainer");
+    const uploadProgressBar = document.getElementById("progressBar");
     const uploadStatus = document.getElementById("uploadStatus");
 
     const generateBtn = document.getElementById("generateBtn");
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (fakeProgress >= 90) fakeProgress = 90;
                 uploadProgressBar.style.width = fakeProgress + "%";
             }, 500);
-
+            console.log("업로드 시작");
             fetch("/upload/", {
                 method: "POST",
                 headers: {
