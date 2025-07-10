@@ -115,7 +115,7 @@ def process_script(
     return video_path
 
 def font_size_to_points(size):
-    sizes = {"small": 30, "medium": 35, "large": 40}
+    sizes = {"small": 35, "medium": 40, "large": 45}
     if size in sizes:
         return sizes[size]
     raise ValueError("Invalid font size")

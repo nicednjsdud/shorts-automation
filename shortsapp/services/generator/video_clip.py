@@ -14,7 +14,7 @@ def create_slide_clip(
     image_clip = ImageClip(image_path).set_duration(duration).resize(VIDEO_SIZE)
 
     # 폰트 경로 설정
-    font_path = os.path.join("shortsapp", "assets", "NanumGothic.ttf")
+    font_path = os.path.join("shortsapp", "assets", "NanumGothicBold.ttf")
 
     # 줌 효과 (Ken Burns 스타일)
     zoom_clip = image_clip.resize(lambda t: 1 + 0.0002 * t).set_position("center")
@@ -24,7 +24,7 @@ def create_slide_clip(
         text,
         font_path=font_path,
         width=VIDEO_SIZE[0],
-        height=250,
+        height=700,
         font_size=font_size,
         font_color=font_color,
     )

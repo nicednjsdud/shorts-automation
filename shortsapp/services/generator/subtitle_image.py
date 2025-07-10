@@ -17,7 +17,7 @@ def generate_subtitle_text_image(
     text, font_path, width=720, height=500, font_size=55, font_color="black"
 ):
     os.makedirs("media/temp_text", exist_ok=True)
-    img = Image.new("RGBA", (width, height), color=(0, 0, 0, 10))
+    img = Image.new("RGBA", (width, height), color=(0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
     try:
@@ -30,9 +30,9 @@ def generate_subtitle_text_image(
 
     text_width, text_height = draw.multiline_textsize(wrapped_text, font=font, spacing=10)
     x = (width - text_width) // 2
-    y = (height - text_height) // 2 - 240  
+    y = (height - text_height) // 2 - 50  
     
-    draw.text((x, y), text, font=font, fill=font_color)
+    draw.multiline_text((x, y), wrapped_text, font=font, fill=font_color, spacing=10)
     filename = f"media/temp_text/temp_text_{hash(text)}.png"
     img.save(filename)
     return filename
