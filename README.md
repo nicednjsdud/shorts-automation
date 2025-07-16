@@ -52,7 +52,7 @@ https://github.com/user-attachments/assets/8d57264f-a90f-4b81-ab07-75d72eb92d35
 * ✅ 스크립트 \n 기준 → ., ", ! 등 문장 기준 분할로 개선
 * ✅  자막 길이 자동 줄바꿈 적용
 * ✅ 이미지 여러 장에 자막 자동 분배
-* ✅ NanumGothic.ttf 폰트 적용 (한글 깨짐 해결)
+* ✅ NanumGothicBold.ttf 폰트 적용 (한글 깨짐 해결)
 * ✅ 코드 리팩토링 (generator 분리리)
 * ✅ 동영상 생성시에 시간 지연 고도화 ( 2분 -> 1분 1초) 
     - (지속적으로 줄여나갈 예정)
